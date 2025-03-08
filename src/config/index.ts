@@ -37,7 +37,7 @@ class Config {
   }
 
   async init() {
-    const db_url = process.env.MONGODB_CLIENT as string;
+    const db_url = process.env.MONGODB_URI as string;
     await connectDB(db_url);
   }
 
