@@ -1,1 +1,2 @@
-export { default as validateData } from "./validate-data";
+export { validateData } from "./validation.middleware";
+export { verifyJWT } from "./jwt.middleware";

@@ -5,7 +5,7 @@ import { handleResponse } from "../utils";
 
 type ValidationSource = "body" | "query" | "params";
 
-export default function validateData(
+export function validateData(
   schema: ZodType<any>, // Support all Zod schema types
   source: ValidationSource = "body", // Default to validating `req.body`
   customErrorMessage?: string // Optional custom error message

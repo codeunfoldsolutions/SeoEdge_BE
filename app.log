@@ -1,0 +1,84 @@
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-03-19T18:47:06.907Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 8080 ⚡","timestamp":"2025-03-19T18:47:06.917Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-03-19T19:37:22.296Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 8080 ⚡","timestamp":"2025-03-19T19:37:22.304Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-03-19T19:38:54.372Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 8080 ⚡","timestamp":"2025-03-19T19:38:54.377Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-03-19T19:40:44.721Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 8080 ⚡","timestamp":"2025-03-19T19:40:44.726Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-03-19T19:47:11.613Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 8080 ⚡","timestamp":"2025-03-19T19:47:11.621Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-03-19T19:51:11.792Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 8080 ⚡","timestamp":"2025-03-19T19:51:11.799Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/v1/api/ping\",\"status\":\"200\",\"responseTime\":\"2.148\"}","timestamp":"2025-03-19T19:51:46.011Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Error sending email: Error: connect ECONNREFUSED 127.0.0.1:465","timestamp":"2025-03-19T19:56:43.609Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Error creating user: Error: Failed to send email","timestamp":"2025-03-19T19:56:43.610Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/register\",\"status\":\"400\",\"responseTime\":\"2871.315\"}","timestamp":"2025-03-19T19:56:43.611Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-03-19T20:00:10.224Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 8080 ⚡","timestamp":"2025-03-19T20:00:10.230Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Error sending email: Error: connect ECONNREFUSED 127.0.0.1:465","timestamp":"2025-03-19T20:00:13.503Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Error creating user: Error: Failed to send email","timestamp":"2025-03-19T20:00:13.504Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/register\",\"status\":\"400\",\"responseTime\":\"743.610\"}","timestamp":"2025-03-19T20:00:13.508Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-03-19T20:01:40.181Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 8080 ⚡","timestamp":"2025-03-19T20:01:40.189Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Error sending email: Error: connect ECONNREFUSED 127.0.0.1:587","timestamp":"2025-03-19T20:02:21.164Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Error creating user: Error: Failed to send email","timestamp":"2025-03-19T20:02:21.165Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/register\",\"status\":\"400\",\"responseTime\":\"773.469\"}","timestamp":"2025-03-19T20:02:21.169Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-03-19T20:03:29.022Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 8080 ⚡","timestamp":"2025-03-19T20:03:29.029Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-03-19T20:03:46.657Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 8080 ⚡","timestamp":"2025-03-19T20:03:46.665Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Error sending email: Error: connect ECONNREFUSED 127.0.0.1:587","timestamp":"2025-03-19T20:04:11.501Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Error creating user: Error: Failed to send email","timestamp":"2025-03-19T20:04:11.502Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/register\",\"status\":\"400\",\"responseTime\":\"735.455\"}","timestamp":"2025-03-19T20:04:11.506Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-03-19T20:05:24.007Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 8080 ⚡","timestamp":"2025-03-19T20:05:24.012Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Error sending email: Error: connect ECONNREFUSED 127.0.0.1:587","timestamp":"2025-03-19T20:05:51.719Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Error creating user: Error: Failed to send email","timestamp":"2025-03-19T20:05:51.720Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/register\",\"status\":\"400\",\"responseTime\":\"739.522\"}","timestamp":"2025-03-19T20:05:51.723Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-03-19T20:06:27.571Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 8080 ⚡","timestamp":"2025-03-19T20:06:27.577Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-03-19T20:06:40.935Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 8080 ⚡","timestamp":"2025-03-19T20:06:40.941Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-03-19T20:07:41.166Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 8080 ⚡","timestamp":"2025-03-19T20:07:41.174Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Error sending email: Error: connect ECONNREFUSED 127.0.0.1:587","timestamp":"2025-03-19T20:11:35.525Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Error creating user: Error: Failed to send email","timestamp":"2025-03-19T20:11:35.526Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/register\",\"status\":\"400\",\"responseTime\":\"948.784\"}","timestamp":"2025-03-19T20:11:35.533Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-03-19T20:14:56.141Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 8080 ⚡","timestamp":"2025-03-19T20:14:56.148Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-03-19T20:15:24.799Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 8080 ⚡","timestamp":"2025-03-19T20:15:24.807Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/register\",\"status\":\"409\",\"responseTime\":\"326.467\"}","timestamp":"2025-03-19T20:15:33.509Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Error sending email: Error: connect ECONNREFUSED 127.0.0.1:587","timestamp":"2025-03-19T20:16:00.271Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Error creating user: Error: Failed to send email","timestamp":"2025-03-19T20:16:00.271Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/register\",\"status\":\"400\",\"responseTime\":\"780.784\"}","timestamp":"2025-03-19T20:16:00.273Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-03-19T20:16:48.235Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 8080 ⚡","timestamp":"2025-03-19T20:16:48.242Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Error sending email: Error: connect ECONNREFUSED 127.0.0.1:465","timestamp":"2025-03-19T20:17:12.346Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Error creating user: Error: Failed to send email","timestamp":"2025-03-19T20:17:12.347Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/register\",\"status\":\"400\",\"responseTime\":\"787.742\"}","timestamp":"2025-03-19T20:17:12.352Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-03-19T20:18:22.494Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 8080 ⚡","timestamp":"2025-03-19T20:18:22.502Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-03-19T20:18:45.601Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 8080 ⚡","timestamp":"2025-03-19T20:18:45.609Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Email sent successfully to alvin2k99@gmail.com","timestamp":"2025-03-19T20:20:03.966Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/register\",\"status\":\"201\",\"responseTime\":\"5647.825\"}","timestamp":"2025-03-19T20:20:03.972Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/verify-email\",\"status\":\"200\",\"responseTime\":\"674.683\"}","timestamp":"2025-03-19T20:22:56.686Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/login\",\"status\":\"200\",\"responseTime\":\"475.607\"}","timestamp":"2025-03-19T20:24:47.244Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/login\",\"status\":\"401\",\"responseTime\":\"2846.219\"}","timestamp":"2025-03-19T20:27:48.922Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-03-19T20:31:56.492Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 8080 ⚡","timestamp":"2025-03-19T20:31:56.500Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Email sent successfully to alvin2k99@gmail.com","timestamp":"2025-03-19T20:32:21.965Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/password-recovery\",\"status\":\"200\",\"responseTime\":\"5596.661\"}","timestamp":"2025-03-19T20:32:21.971Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-03-19T20:33:09.523Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 8080 ⚡","timestamp":"2025-03-19T20:33:09.530Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/reset-password\",\"status\":\"404\",\"responseTime\":\"2.735\"}","timestamp":"2025-03-19T20:33:48.486Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Error updating password: JsonWebTokenError: jwt must be provided","timestamp":"2025-03-19T20:34:08.460Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"PATCH\",\"url\":\"/v1/api/auth/reset-password\",\"status\":\"400\",\"responseTime\":\"4.084\"}","timestamp":"2025-03-19T20:34:08.463Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-03-19T20:34:34.072Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 8080 ⚡","timestamp":"2025-03-19T20:34:34.080Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"PATCH\",\"url\":\"/v1/api/auth/reset-password\",\"status\":\"401\",\"responseTime\":\"3.834\"}","timestamp":"2025-03-19T20:34:36.423Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"PATCH\",\"url\":\"/v1/api/auth/reset-password\",\"status\":\"200\",\"responseTime\":\"1223.237\"}","timestamp":"2025-03-19T20:34:55.303Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/login\",\"status\":\"401\",\"responseTime\":\"489.646\"}","timestamp":"2025-03-19T20:35:00.917Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/login\",\"status\":\"200\",\"responseTime\":\"417.563\"}","timestamp":"2025-03-19T20:35:05.964Z"}
