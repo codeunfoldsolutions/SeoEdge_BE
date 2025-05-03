@@ -1,10 +1,10 @@
-import { Model } from "mongoose";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { User } from "../../types/auth";
-import { IUserDocument, UserModel } from "../../models/user.model";
-import { generateOTP, sendEmail } from "../../utils/email";
-import logger from "../../config/logger";
+import { Model } from 'mongoose';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { User } from '../../types/auth';
+import { IUserDocument, UserModel } from '../../models/user.model';
+import { generateOTP, sendEmail } from '../../utils/email';
+import logger from '../../config/logger';
 
 class AuthService {
   private static instance: AuthService;
@@ -27,7 +27,7 @@ class AuthService {
       return { data: user ? [user] : [] };
     } catch (error) {
       logger.error(`Error checking user existence: ${error}`);
-      throw new Error("Failed to check user existence");
+      throw new Error('Failed to check user existence');
     }
   }
 
@@ -58,14 +58,14 @@ class AuthService {
       // Send verification email
       await sendEmail({
         to: email,
-        subject: "Verify your email",
+        subject: 'Verify your email',
         text: `Your verification code is: ${otp}`,
       });
 
       return { auth_id: user._id };
     } catch (error) {
       logger.error(`Error creating user: ${error}`);
-      return { error: "Failed to create user" };
+      return { error: 'Failed to create user' };
     }
   }
 
@@ -74,11 +74,11 @@ class AuthService {
       const user = await this.userModel.findOne({ email });
 
       if (!user) {
-        return { error: "User not found" };
+        return { error: 'User not found' };
       }
 
       if (user.isEmailVerified) {
-        return { error: "Email already verified" };
+        return { error: 'Email already verified' };
       }
 
       if (
@@ -86,7 +86,7 @@ class AuthService {
         !user.emailVerificationExpires ||
         user.emailVerificationExpires < new Date()
       ) {
-        return { error: "Invalid or expired OTP" };
+        return { error: 'Invalid or expired OTP' };
       }
 
       // Update user verification status
@@ -109,7 +109,7 @@ class AuthService {
       };
     } catch (error) {
       logger.error(`Error verifying email: ${error}`);
-      return { error: "Failed to verify email" };
+      return { error: 'Failed to verify email' };
     }
   }
 
@@ -118,17 +118,17 @@ class AuthService {
       const user = await this.userModel.findOne({ email });
 
       if (!user) {
-        return { error: "Invalid credentials", status: 401 };
+        return { error: 'Invalid credentials', status: 401 };
       }
 
       const isPasswordValid = await bcrypt.compare(password, user.password);
 
       if (!isPasswordValid) {
-        return { error: "Invalid credentials", status: 401 };
+        return { error: 'Invalid credentials', status: 401 };
       }
 
       if (!user.isEmailVerified) {
-        return { error: "Please verify your email first", status: 403 };
+        return { error: 'Please verify your email first', status: 403 };
       }
 
       const { accessToken, refreshToken } = this.generateTokens(user);
@@ -144,7 +144,7 @@ class AuthService {
       };
     } catch (error) {
       logger.error(`Error signing in user: ${error}`);
-      throw new Error("Failed to sign in user");
+      throw new Error('Failed to sign in user');
     }
   }
 
@@ -153,11 +153,11 @@ class AuthService {
       const user = await this.userModel.findOne({ email });
 
       if (!user) {
-        return { error: "User not found" };
+        return { error: 'User not found' };
       }
 
       if (user.isEmailVerified) {
-        return { error: "Email already verified" };
+        return { error: 'Email already verified' };
       }
 
       const otp = generateOTP();
@@ -167,14 +167,14 @@ class AuthService {
 
       await sendEmail({
         to: email,
-        subject: "Verify your email",
+        subject: 'Verify your email',
         text: `Your verification code is: ${otp}`,
       });
 
-      return { data: { message: "OTP sent successfully" } };
+      return { data: { message: 'OTP sent successfully' } };
     } catch (error) {
       logger.error(`Error resending OTP: ${error}`);
-      return { error: "Failed to resend OTP" };
+      return { error: 'Failed to resend OTP' };
     }
   }
 
@@ -183,27 +183,27 @@ class AuthService {
       const user = await this.userModel.findOne({ email });
 
       if (!user) {
-        return { error: "User not found" };
+        return { error: 'User not found' };
       }
 
       const resetToken = jwt.sign(
         { userId: user._id },
         process.env.JWT_SECRET!,
-        { expiresIn: "1h" }
+        { expiresIn: '1h' }
       );
 
       const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
 
       await sendEmail({
         to: email,
-        subject: "Reset your password",
+        subject: 'Reset your password',
         text: `Click the following link to reset your password: ${resetUrl}`,
       });
 
-      return { data: { message: "Reset password email sent successfully" } };
+      return { data: { message: 'Reset password email sent successfully' } };
     } catch (error) {
       logger.error(`Error sending reset password email: ${error}`);
-      return { error: "Failed to send reset password email" };
+      return { error: 'Failed to send reset password email' };
     }
   }
 
@@ -219,17 +219,17 @@ class AuthService {
       const user = await this.userModel.findById(decoded.userId);
 
       if (!user) {
-        return { error: "User not found" };
+        return { error: 'User not found' };
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
       user.password = hashedPassword;
       await user.save();
 
-      return { data: { message: "Password updated successfully" } };
+      return { data: { message: 'Password updated successfully' } };
     } catch (error) {
       logger.error(`Error updating password: ${error}`);
-      return { error: "Failed to update password" };
+      return { error: 'Failed to update password' };
     }
   }
 
@@ -237,13 +237,13 @@ class AuthService {
     const accessToken = jwt.sign(
       { userId: user._id },
       process.env.JWT_SECRET!,
-      { expiresIn: "15m" }
+      { expiresIn: '15m' }
     );
 
     const refreshToken = jwt.sign(
       { userId: user._id },
       process.env.JWT_REFRESH_SECRET!,
-      { expiresIn: "7d" }
+      { expiresIn: '7d' }
     );
 
     return { accessToken, refreshToken };
