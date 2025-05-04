@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
-import { StatusCodes } from "http-status-codes";
-import { handleResponse } from "../utils";
+import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
+import { StatusCodes } from 'http-status-codes';
+import { handleResponse } from '../utils';
 
 declare global {
   namespace Express {
@@ -19,22 +19,25 @@ export const verifyJWT = (req: Request, res: Response, next: NextFunction) => {
       return handleResponse(
         res,
         StatusCodes.UNAUTHORIZED,
-        "No authorization header"
+        'No authorization header'
       );
     }
 
-    const token = authHeader.split(" ")[1];
+    const token = authHeader.split(' ')[1];
 
     if (!token) {
-      return handleResponse(res, StatusCodes.UNAUTHORIZED, "No token provided");
+      return handleResponse(res, StatusCodes.UNAUTHORIZED, 'No token provided');
     }
 
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+      req.user = (decoded as { userId: string }).userId;
+      console.log(req.user);
       req.accessToken = token;
       next();
+      // return res.status(204);
     } catch (error) {
-      return handleResponse(res, StatusCodes.UNAUTHORIZED, "Invalid token");
+      return handleResponse(res, StatusCodes.UNAUTHORIZED, 'Invalid token');
     }
   } catch (error) {
     next(error);
