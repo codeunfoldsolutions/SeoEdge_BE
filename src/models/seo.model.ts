@@ -8,6 +8,7 @@ export interface ISeo {
   title: string;
   description: string;
   keywords: string[];
+  criticalCount: number;
   categories: {
     performance: number;
     accessibility: number;
@@ -116,6 +117,10 @@ const seoSchema = new Schema<ISeoDocument>(
     },
     description: {
       type: String,
+      // required: true
+    },
+    criticalCount: {
+      type: Number,
       // required: true
     },
     keywords: [{ type: String }],

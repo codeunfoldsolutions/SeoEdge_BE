@@ -57,6 +57,7 @@ class SeoController {
         keywords,
         categories: lightResponse!.categories!,
         audits: lightResponse!.audits!,
+        criticalCount: lightResponse!.criticalCount!,
       };
 
       //create new seo entry

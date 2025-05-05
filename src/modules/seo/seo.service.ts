@@ -105,6 +105,65 @@ class SeoService {
         const match = text.match(/^[^.]*\./);
         return match ? match[0] : text;
       }
+      // Build your audits payload
+      const processedAudits = {
+        'is-on-https': {
+          score: audits['is-on-https'].score ?? 0,
+          description: firstSentence(audits['is-on-https'].description ?? ''),
+        },
+        'redirects-http': {
+          score: audits['redirects-http'].score ?? 0,
+          description: firstSentence(
+            audits['redirects-http'].description ?? ''
+          ),
+        },
+        viewport: {
+          score: audits.viewport.score ?? 0,
+          description: firstSentence(audits.viewport.description ?? ''),
+        },
+        'first-contentful-paint': {
+          score: audits['first-contentful-paint'].score ?? 0,
+          displayValue: audits['first-contentful-paint'].displayValue ?? '',
+          description: firstSentence(
+            audits['first-contentful-paint'].description ?? ''
+          ),
+        },
+        'first-meaningful-paint': {
+          score: audits['first-meaningful-paint'].score ?? 0,
+          description: firstSentence(
+            audits['first-meaningful-paint'].description ?? ''
+          ),
+        },
+        speedIndex: {
+          score: audits['speed-index'].score ?? 0,
+          displayValue: audits['speed-index'].displayValue ?? '',
+          description: firstSentence(audits['speed-index'].description ?? ''),
+        },
+        'errors-in-console': {
+          score: audits['errors-in-console'].score ?? 0,
+          description: firstSentence(
+            audits['errors-in-console'].description ?? ''
+          ),
+        },
+        interactive: {
+          score: audits.interactive.score ?? 0,
+          displayValue: audits.interactive.displayValue ?? '',
+          description: firstSentence(audits.interactive.description ?? ''),
+        },
+        'bootup-time': {
+          score: audits['bootup-time'].score ?? 0,
+          displayValue: audits['bootup-time'].displayValue ?? '',
+          description: firstSentence(audits['bootup-time'].description ?? ''),
+        },
+      };
+
+      // Count critical issues (score < 0.5 or score == 0)
+      const criticalCount = Object.values(processedAudits).reduce(
+        (count, a) => {
+          return count + (a.score === null || a.score < 0.5 ? 1 : 0);
+        },
+        0
+      );
 
       return {
         categories: {
@@ -113,56 +172,8 @@ class SeoService {
           seo: categories.seo.score ?? 0,
           bestPractices: categories['best-practices'].score ?? 0,
         },
-        audits: {
-          'is-on-https': {
-            score: audits['is-on-https'].score ?? 0,
-            description: firstSentence(audits['is-on-https'].description ?? ''),
-          },
-          'redirects-http': {
-            score: audits['redirects-http'].score ?? 0,
-            description: firstSentence(
-              audits['redirects-http'].description ?? ''
-            ),
-          },
-          viewport: {
-            score: audits.viewport.score ?? 0,
-            description: firstSentence(audits.viewport.description ?? ''),
-          },
-          'first-contentful-paint': {
-            score: audits['first-contentful-paint'].score ?? 0,
-            displayValue: audits['first-contentful-paint'].displayValue ?? '',
-            description: firstSentence(
-              audits['first-contentful-paint'].description ?? ''
-            ),
-          },
-          'first-meaningful-paint': {
-            score: audits['first-meaningful-paint'].score ?? 0,
-            description: firstSentence(
-              audits['first-meaningful-paint'].description ?? ''
-            ),
-          },
-          speedIndex: {
-            score: audits['speed-index'].score ?? 0,
-            displayValue: audits['speed-index'].displayValue ?? '',
-            description: firstSentence(audits['speed-index'].description ?? ''),
-          },
-          'errors-in-console': {
-            score: audits['errors-in-console'].score ?? 0,
-            description: firstSentence(
-              audits['errors-in-console'].description ?? ''
-            ),
-          },
-          interactive: {
-            score: audits.interactive.score ?? 0,
-            displayValue: audits.interactive.displayValue ?? '',
-            description: firstSentence(audits.interactive.description ?? ''),
-          },
-          'bootup-time': {
-            score: audits['bootup-time'].score ?? 0,
-            displayValue: audits['bootup-time'].displayValue ?? '',
-            description: firstSentence(audits['bootup-time'].description ?? ''),
-          },
-        },
+        audits: processedAudits,
+        criticalCount,
       };
     } catch (error: any) {
       logger.error(`Error generating Lighthouse report: ${error}`);
