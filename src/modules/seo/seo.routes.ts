@@ -28,7 +28,7 @@ SeoRouter.get(
 );
 
 //create pdf report
-SeoRouter.post(
+SeoRouter.get(
   '/pdf/:id',
   verifyJWT,
   // validateData(pdfGenerationRequest),
