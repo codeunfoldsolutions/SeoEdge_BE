@@ -16,7 +16,7 @@ export interface ISeo {
   audits: {
     'is-on-https': {
       score: number;
-      desciption: string;
+      description: string;
     };
     'redirects-http': {
       score: number;
@@ -57,7 +57,7 @@ export interface ISeo {
   };
 }
 
-export interface seoCreationSchema extends Request {
+export interface seoCreationRequest extends Request {
   body: {
     url: string;
     title: string;
@@ -65,8 +65,13 @@ export interface seoCreationSchema extends Request {
     keywords: string[];
   };
 }
+export interface pdfGenerationRequest extends Request {
+  params: {
+    id: string;
+  };
+}
 
-export interface lighthouseResponse {
+export interface lighthouseDashResponse {
   categories: {
     performance: number;
     accessibility: number;
@@ -115,6 +120,25 @@ export interface lighthouseResponse {
       description: string;
     };
   };
+}
+export interface CategoryEntry {
+  score: number | null;
+  [key: string]: any;
+}
+export interface AuditEntry {
+  score: number | null;
+  description?: string;
+  displayValue?: string;
+  [key: string]: any;
+}
+export interface lighthousePDFResponse {
+  categories: {
+    [categoryId: string]: CategoryEntry;
+  };
+  audits: {
+    [auditId: string]: AuditEntry;
+  };
+  [extra: string]: any; // catch-all for any other top-level fields
 }
 
 export interface SeoCreationResponse {

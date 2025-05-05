@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "start": "node  dist/index.js",
-    "dev": "nodemon --loader ts-node/esm index.ts",
+    "dev": "nodemon --loader ts-node/esm src/index.ts",
     "build": "tsc -p .",
-    "local": "tsx watch index.ts",
+    "postbuild": "tsc-esm-fix --ext .js",
+    "local": "tsx watch src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -30,6 +31,7 @@
     "mongoose": "^8.12.1",
     "morgan": "^1.10.0",
     "nodemailer": "^6.10.0",
+    "pdfkit": "^0.17.1",
     "winston": "^3.17.0",
     "zod": "^3.24.1"
   },
@@ -38,9 +40,11 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/morgan": "^1.9.9",
+    "@types/pdfkit": "^0.13.9",
     "nodemon": "^3.1.9",
     "prisma": "^6.3.1",
     "ts-node": "^10.9.2",
+    "tsc-esm-fix": "^3.1.2",
     "tsx": "^4.19.4",
     "typescript": "^5.7.3"
   }

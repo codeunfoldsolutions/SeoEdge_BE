@@ -82,3 +82,85 @@
 {"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"PATCH\",\"url\":\"/v1/api/auth/reset-password\",\"status\":\"200\",\"responseTime\":\"1223.237\"}","timestamp":"2025-03-19T20:34:55.303Z"}
 {"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/login\",\"status\":\"401\",\"responseTime\":\"489.646\"}","timestamp":"2025-03-19T20:35:00.917Z"}
 {"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/login\",\"status\":\"200\",\"responseTime\":\"417.563\"}","timestamp":"2025-03-19T20:35:05.964Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-03T15:10:06.868Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3000 ⚡","timestamp":"2025-05-03T15:10:06.881Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/seo/create\",\"status\":\"401\",\"responseTime\":\"10.560\"}","timestamp":"2025-05-03T15:10:28.147Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/login\",\"status\":\"200\",\"responseTime\":\"415.861\"}","timestamp":"2025-05-03T15:10:40.741Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/login\",\"status\":\"200\",\"responseTime\":\"399.194\"}","timestamp":"2025-05-03T15:11:07.698Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Error creating new SEO entry: MongoServerError: E11000 duplicate key error collection: seoedge.seos index: url_1 dup key: { url: \"https://www.humanizeai.pro\" }","timestamp":"2025-05-03T15:12:12.706Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/seo/create\",\"status\":\"400\",\"responseTime\":\"53416.662\"}","timestamp":"2025-05-03T15:12:12.712Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-03T15:13:22.767Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3000 ⚡","timestamp":"2025-05-03T15:13:22.777Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-03T15:15:19.058Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3000 ⚡","timestamp":"2025-05-03T15:15:19.067Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-03T15:15:38.198Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3000 ⚡","timestamp":"2025-05-03T15:15:38.211Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/seo/create\",\"status\":\"409\",\"responseTime\":\"116.082\"}","timestamp":"2025-05-03T15:15:51.284Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-03T15:16:24.289Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3000 ⚡","timestamp":"2025-05-03T15:16:24.300Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/seo/create\",\"status\":\"409\",\"responseTime\":\"113.056\"}","timestamp":"2025-05-03T15:16:36.915Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/seo/create\",\"status\":\"201\",\"responseTime\":\"28579.100\"}","timestamp":"2025-05-03T15:17:14.391Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-05T08:44:18.570Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-05T08:44:52.512Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-05T08:44:52.520Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-05T09:13:31.058Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-05T09:13:31.064Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/login\",\"status\":\"200\",\"responseTime\":\"224.349\"}","timestamp":"2025-05-05T09:14:48.970Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/seo/create\",\"status\":\"409\",\"responseTime\":\"40.430\"}","timestamp":"2025-05-05T09:15:09.215Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-05T12:17:15.264Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-05T12:17:15.331Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/login\",\"status\":\"200\",\"responseTime\":\"283.870\"}","timestamp":"2025-05-05T12:18:23.990Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-05T12:23:17.469Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-05T12:23:17.481Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Error checking project existence: CastError: Cast to ObjectId failed for value \"{ owner: '681622245ec53e8677c1199d' }\" (type Object) at path \"_id\" for model \"Seo\"","timestamp":"2025-05-05T12:23:41.581Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Something went wrong: Error: Failed to check project existence","timestamp":"2025-05-05T12:23:41.582Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Failed to check project existence","timestamp":"2025-05-05T12:23:41.583Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/v1/api/seo/all\",\"status\":\"500\",\"responseTime\":\"35.884\"}","timestamp":"2025-05-05T12:23:41.591Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-05T12:24:54.189Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-05T12:24:54.210Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-05T12:27:00.297Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-05T12:27:00.306Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Error checking project existence: CastError: Cast to ObjectId failed for value \"{ owner: new ObjectId('681622245ec53e8677c1199d') }\" (type Object) at path \"_id\" for model \"Seo\"","timestamp":"2025-05-05T12:27:06.158Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Something went wrong: Error: Failed to check project existence","timestamp":"2025-05-05T12:27:06.159Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Failed to check project existence","timestamp":"2025-05-05T12:27:06.161Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/v1/api/seo/all\",\"status\":\"500\",\"responseTime\":\"28.132\"}","timestamp":"2025-05-05T12:27:06.171Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-05T12:27:38.343Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-05T12:27:38.350Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Error checking project existence: CastError: Cast to ObjectId failed for value \"{ ownerId: new ObjectId('681622245ec53e8677c1199d') }\" (type Object) at path \"_id\" for model \"Seo\"","timestamp":"2025-05-05T12:27:41.018Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Something went wrong: Error: Failed to check project existence","timestamp":"2025-05-05T12:27:41.019Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Failed to check project existence","timestamp":"2025-05-05T12:27:41.020Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/v1/api/seo/all\",\"status\":\"500\",\"responseTime\":\"12.770\"}","timestamp":"2025-05-05T12:27:41.023Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-05T12:28:28.471Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-05T12:28:28.480Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Error checking project existence: CastError: Cast to ObjectId failed for value \"{ ownerId: new ObjectId('681622245ec53e8677c1199d') }\" (type Object) at path \"_id\" for model \"Seo\"","timestamp":"2025-05-05T12:28:33.675Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Something went wrong: Error: Failed to check project existence","timestamp":"2025-05-05T12:28:33.675Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Failed to check project existence","timestamp":"2025-05-05T12:28:33.678Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/v1/api/seo/all\",\"status\":\"500\",\"responseTime\":\"31.258\"}","timestamp":"2025-05-05T12:28:33.691Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-05T12:29:04.476Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-05T12:29:04.487Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Error checking project existence: CastError: Cast to ObjectId failed for value \"{ ownerId: '681622245ec53e8677c1199d' }\" (type Object) at path \"_id\" for model \"Seo\"","timestamp":"2025-05-05T12:29:10.573Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Something went wrong: Error: Failed to check project existence","timestamp":"2025-05-05T12:29:10.577Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Failed to check project existence","timestamp":"2025-05-05T12:29:10.582Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/v1/api/seo/all\",\"status\":\"500\",\"responseTime\":\"41.708\"}","timestamp":"2025-05-05T12:29:10.593Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-05T12:30:20.076Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-05T12:30:20.085Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/v1/api/seo/all\",\"status\":\"201\",\"responseTime\":\"25.214\"}","timestamp":"2025-05-05T12:30:22.772Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-05T12:31:08.337Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-05T12:31:08.345Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-05T12:31:26.229Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-05T12:31:26.237Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-05T12:31:38.197Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-05T12:31:38.221Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/seo/pdf/6816292f24e5dd7c896f8af3\",\"status\":\"400\",\"responseTime\":\"25.478\"}","timestamp":"2025-05-05T12:32:01.218Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-05T12:32:26.142Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-05T12:32:26.151Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/seo/pdf/6816292f24e5dd7c896f8af3\",\"status\":\"200\",\"responseTime\":\"34286.059\"}","timestamp":"2025-05-05T12:33:06.694Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-05T12:37:45.282Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-05T12:37:45.297Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/seo/pdf/6816292f24e5dd7c896f8af3\",\"status\":\"401\",\"responseTime\":\"4.846\"}","timestamp":"2025-05-05T12:37:50.969Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/login\",\"status\":\"200\",\"responseTime\":\"164.414\"}","timestamp":"2025-05-05T12:38:13.367Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/seo/pdf/6816292f24e5dd7c896f8af3\",\"status\":\"200\",\"responseTime\":\"28000.036\"}","timestamp":"2025-05-05T12:39:20.162Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-05T12:40:37.853Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-05T12:40:37.868Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/seo/pdf/6816292f24e5dd7c896f8af3\",\"status\":\"200\",\"responseTime\":\"28674.870\"}","timestamp":"2025-05-05T12:41:10.723Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/seo/pdf/6816292f24e5dd7c896f8af3\",\"status\":\"200\",\"responseTime\":\"36675.726\"}","timestamp":"2025-05-05T12:43:40.438Z"}

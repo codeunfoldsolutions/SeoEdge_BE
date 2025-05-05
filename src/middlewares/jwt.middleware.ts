@@ -32,7 +32,6 @@ export const verifyJWT = (req: Request, res: Response, next: NextFunction) => {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET!);
       req.user = (decoded as { userId: string }).userId;
-      console.log(req.user);
       req.accessToken = token;
       next();
       // return res.status(204);
