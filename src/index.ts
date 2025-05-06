@@ -1,6 +1,6 @@
-import app from "./src/app";
-import config from "./src/config";
-import logger from "./src/config/logger";
+import app from './app';
+import config from './config';
+import logger from './config/logger';
 
 config
   .init()
@@ -9,7 +9,7 @@ config
       logger.info(`⚡ Server running on port ${config.PORT} ⚡`)
     );
   })
-  .catch((err) => {
+  .catch((err: any) => {
     if (err instanceof Error)
       logger.error(`Server failed to initialize ${err.message}`);
   });
