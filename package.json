@@ -4,8 +4,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+
     "start": "node  dist/index.js",
     "dev": "nodemon --loader ts-node/esm src/index.ts",
+
     "build": "tsc -p .",
     "postbuild": "tsc-esm-fix --ext .js",
     "local": "tsx watch src/index.ts",
