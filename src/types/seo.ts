@@ -8,6 +8,8 @@ export interface ISeo {
   description: string;
   keywords: string[];
   criticalCount: number;
+  active?: boolean;
+  lastAudit?: Date;
   categories: {
     performance: number;
     accessibility: number;

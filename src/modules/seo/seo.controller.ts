@@ -90,8 +90,6 @@ class SeoController {
     next: NextFunction
   ): Promise<void> {
     try {
-      // check if user the already has an entry in the system
-      console.log('user', req.user);
       const existingSeo = await this.seoService.findProjects(req.user);
 
       return handleResponse(
