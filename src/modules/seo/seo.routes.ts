@@ -1,10 +1,6 @@
 import { Router } from 'express';
 import { validateData, verifyJWT } from '../../middlewares';
-import {
-  seoCreationRequest,
-  pdfGenerationRequest,
-  runAuditRequest,
-} from './seo.validation';
+import { seoCreationRequest, pdfGenerationRequest } from './seo.validation';
 import SeoController from './seo.controller';
 import SeoService from './seo.service';
 
@@ -44,11 +40,18 @@ SeoRouter.get(
   verifyJWT,
   seoController.handleGetAllAudits.bind(seoController)
 );
-// Run audit
+
+//Gets all audits for a project
 SeoRouter.get(
-  '/audit/:projectId',
+  '/audits/:projectId',
   verifyJWT,
-  validateData(runAuditRequest),
+  seoController.handleGetsAuditsForProject.bind(seoController)
+);
+// Runs audit
+SeoRouter.post(
+  '/audits/:projectId',
+  verifyJWT,
+  // validateData(runAuditRequest),
   seoController.handleRunAudit.bind(seoController)
 );
 
@@ -56,16 +59,8 @@ SeoRouter.get(
 SeoRouter.get(
   '/pdf/:id',
   verifyJWT,
-  validateData(pdfGenerationRequest),
+  // validateData(pdfGenerationRequest),
   seoController.handleGeneratePdf.bind(seoController)
 );
-
-// // Get seo project by id
-// SeoRouter.post(
-//   '/create',
-//   verifyJWT,
-//   validateData(seoCreationSchema),
-//   seoController.handleCreateSeo.bind(seoController)
-// );
 
 export default SeoRouter;

@@ -23,19 +23,13 @@ class SeoController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const rawPage = req.query.page;
-      let pageNum = 0;
-
-      if (typeof rawPage === 'string') {
-        const parsed = Number(rawPage);
-        pageNum = Number.isNaN(parsed) ? 0 : parsed;
-      }
-
+      const { page = 1 } = req.query;
+      const rawPage = Number(page) || 1;
       // Now pageNum is a valid number
       const existingSeo = await this.seoService.findProjects(
         req.user,
         'dash',
-        pageNum
+        rawPage
       );
 
       return handleResponse(
@@ -112,7 +106,7 @@ class SeoController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const { url, title, description, keywords } = req.body;
+      const { url, title, description = '', keywords = [] } = req.body;
 
       // check if user the already has an entry in the system
       const existingSeo = await this.seoService.checkIfProjectExists(req.user, {
@@ -120,7 +114,16 @@ class SeoController {
         $options: 'i',
       });
 
-      if (existingSeo?.data?.length === 1) {
+      if (existingSeo?.error) {
+        return handleResponse(
+          res,
+          StatusCodes.INTERNAL_SERVER_ERROR,
+          `Something went wrong, please try again later`,
+          { error: existingSeo.error }
+        );
+      }
+
+      if (existingSeo!.data!.length >= 1) {
         return handleResponse(
           res,
           StatusCodes.CONFLICT,
@@ -184,7 +187,55 @@ class SeoController {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    const id = req.params.ownerId;
+    const id = req.user;
+    try {
+      const rawPage = req.query.page;
+      let pageNum = 0;
+
+      if (typeof rawPage === 'string') {
+        const parsed = Number(rawPage);
+        pageNum = Number.isNaN(parsed) ? 0 : parsed;
+      }
+
+      // // Check if project exists
+      // const existingProject = await this.seoService.findProjectById(id);
+
+      // if (existingProject?.data?.length !== 1) {
+      //   return handleResponse(
+      //     res,
+      //     StatusCodes.NOT_FOUND,
+      //     `Project doesn't exist`
+      //   );
+      // }
+
+      //fetch all project audits
+      const audits = await this.seoService.findAllAudits(id, pageNum);
+      if (audits?.error) {
+        return handleResponse(
+          res,
+          StatusCodes.NOT_FOUND,
+          `Audits history couldn't be found`
+        );
+      }
+
+      return handleResponse(
+        res,
+        StatusCodes.CREATED,
+        'Audits fetched successfully',
+        { data: audits.data, info: audits.info }
+      );
+    } catch (err) {
+      logger.error(`Something went wrong: ${err}`);
+      next(err);
+    }
+  }
+  async handleGetsAuditsForProject(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const ownerId = req.user;
+    const projectId = req.params.projectId;
     try {
       const rawPage = req.query.page;
       let pageNum = 0;
@@ -195,7 +246,7 @@ class SeoController {
       }
 
       // Check if project exists
-      const existingProject = await this.seoService.findProjectById(id);
+      const existingProject = await this.seoService.findProjectById(projectId);
 
       if (existingProject?.data?.length !== 1) {
         return handleResponse(
@@ -206,12 +257,16 @@ class SeoController {
       }
 
       //fetch all project audits
-      const audits = await this.seoService.findAllAudits(id, pageNum);
+      const audits = await this.seoService.findAllAuditsForProject(
+        ownerId,
+        projectId,
+        pageNum
+      );
       if (audits?.error) {
         return handleResponse(
           res,
           StatusCodes.NOT_FOUND,
-          `Audits history coudln't be found`
+          `Audits history for ${existingProject.data[0].title} couldn't be found`
         );
       }
 
@@ -234,6 +289,14 @@ class SeoController {
   ): Promise<void> {
     const id = req.params.projectId;
     try {
+      //check if it is a valid mongoId
+      if (!this.seoService.isValidObjectId(id)) {
+        return handleResponse(
+          res,
+          StatusCodes.BAD_REQUEST,
+          `Invalid project id`
+        );
+      }
       // check if user the already has an entry in the system
       const existingProject = await this.seoService.findProjectById(id);
 
@@ -375,6 +438,7 @@ class SeoController {
       const lightHouseData = {
         categories: lightResponse!.categories!,
         audits: lightResponse!.audits!,
+        url: existingSeo!.data[0].url,
       };
 
       //convert the response to pdf
@@ -392,23 +456,6 @@ class SeoController {
           { error: pdfResponse.error }
         );
       }
-
-      // Check if an error occurred during seo entry creation
-      // if (newSeo?.error) {
-      //   return handleResponse(
-      //     res,
-      //     StatusCodes.BAD_REQUEST,
-      //     `Failed to create SEO entry`,
-      //     { error: newSeo.error }
-      //   );
-      // }
-
-      // return handleResponse(
-      //   res,
-      //   StatusCodes.CREATED,
-      //   'New Seo created successfully',
-      //   { data: newSeo.data }
-      // );
     } catch (err) {
       logger.error(`Something went wrong: ${err}`);
       next(err);

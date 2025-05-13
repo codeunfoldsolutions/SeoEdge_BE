@@ -30,30 +30,21 @@ class SeoService {
     return SeoService.instance;
   }
 
-  async findProjects(id: string, type: string, page?: number) {
+  async findProjects(id: string, type: string, page?: string | number) {
     try {
       let pagination;
       if (type === 'dash') {
-        //add pagination
-        const paginationPage =
-          typeof page === 'undefined'
-            ? 0 // if page is undefined, use 0
-            : Number(page) > 0
-            ? Number(page) - 1
-            : 0;
-        pagination = new Pagination(5, Math.max(0, +paginationPage));
+        pagination = new Pagination(5, page ? +page : 1);
       }
       if (type === 'all') {
-        const paginationPage =
-          typeof page === 'undefined'
-            ? 0 // if page is undefined, use 0
-            : Number(page) > 0
-            ? Number(page) - 1
-            : 0;
-        pagination = new Pagination(15, Math.max(0, +paginationPage));
+        pagination = new Pagination(15, page ? +page : 1);
       }
+
+      // console.log(pagination?.skip + 'skip', pagination?.limit + 'limit');
       // inside your async method
-      const baseQuery = this.seoModel.find({ ownerId: id });
+      const baseQuery = this.seoModel
+        .find({ ownerId: id })
+        .sort({ createdAt: -1 });
 
       const paginatedQuery = pagination
         ? baseQuery.skip(pagination.skip).limit(pagination.limit)
@@ -63,8 +54,12 @@ class SeoService {
 
       const info = pagination!.getPaginationInfo(project.length);
 
+      const pageItems = pagination
+        ? project.slice(0, pagination.perPage)
+        : project;
+
       return {
-        data: project ? [project] : [],
+        data: project ? pageItems : [],
         info: project ? info : '',
       };
     } catch (error) {
@@ -147,18 +142,12 @@ class SeoService {
   async findAllAudits(id: string, page?: number) {
     try {
       let pagination;
-
-      const paginationPage =
-        typeof page === 'undefined'
-          ? 0 // if page is undefined, use 0
-          : Number(page) > 0
-          ? Number(page) - 1
-          : 0;
-      pagination = new Pagination(10, Math.max(0, +paginationPage));
+      pagination = new Pagination(10, page ? +page : 1);
       // inside your async method
       const baseQuery = this.auditModel
         .find({ ownerId: id })
-        .populate('projectId');
+        .populate('projectId')
+        .sort({ createdAt: -1 });
 
       const paginatedQuery = pagination
         ? baseQuery.skip(pagination.skip).limit(pagination.limit)
@@ -168,8 +157,48 @@ class SeoService {
 
       const info = pagination!.getPaginationInfo(project.length);
 
+      const pageItems = pagination
+        ? project.slice(0, pagination.perPage)
+        : project;
+
       return {
-        data: project ? [project] : [],
+        data: project ? pageItems : [],
+        info: project ? info : '',
+      };
+    } catch (error) {
+      logger.error(`Error finding audit history: ${error}`);
+      return { error: 'Failed to create audit entry' };
+    }
+  }
+  async findAllAuditsForProject(
+    ownerId: string,
+    projectId: string,
+    page?: number
+  ) {
+    try {
+      let pagination;
+
+      pagination = new Pagination(10, page ? +page : 1);
+      // inside your async method
+      const baseQuery = this.auditModel
+        .find({
+          ownerId: ownerId,
+          projectId: projectId,
+        })
+        .sort({ createdAt: -1 });
+      const paginatedQuery = pagination
+        ? baseQuery.skip(pagination.skip).limit(pagination.limit)
+        : baseQuery;
+
+      const project = await paginatedQuery.exec();
+
+      const info = pagination!.getPaginationInfo(project.length);
+      const pageItems = pagination
+        ? project.slice(0, pagination.perPage)
+        : project;
+
+      return {
+        data: project ? pageItems : [],
         info: project ? info : '',
       };
     } catch (error) {
@@ -432,7 +461,8 @@ class SeoService {
         const total = scores.reduce((sum, s) => sum + s, 0);
         const average = total / count;
 
-        return average * 100;
+        // Round to two decimal places and convert back to Number
+        return Number(average.toFixed(2));
       }
 
       const score = getAverageAuditScore(processedAudits);
@@ -493,7 +523,7 @@ class SeoService {
   }
 
   async createPdfReport(report: lighthousePDFResponse, res: Response) {
-    const { audits, categories } = report;
+    const { audits, categories, url } = report;
 
     try {
       // Classify audits dynamically
@@ -534,6 +564,10 @@ class SeoService {
       logger.error(`Error generating Lighthouse PDF report: ${error}`);
       return { error: 'Failed to generate Lighthouse PDF report' };
     }
+  }
+
+  async isValidObjectId(id: string): Promise<boolean> {
+    return mongoose.Types.ObjectId.isValid(id);
   }
 
   private async writeCategorySection(
