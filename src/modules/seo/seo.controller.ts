@@ -9,6 +9,7 @@ import type {
 } from '../../types/seo';
 import SeoService from './seo.service';
 import { handleResponse } from '../../utils';
+import mongoose from 'mongoose';
 
 class SeoController {
   private seoService: SeoService;
@@ -70,6 +71,40 @@ class SeoController {
         StatusCodes.CREATED,
         'SEO projects fetched successfully',
         { data: existingSeo.data, info: existingSeo.info }
+      );
+    } catch (err) {
+      logger.error(`Something went wrong: ${err}`);
+      next(err);
+    }
+  }
+  async handleCompareRecentAudits(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const { projectId } = req.params;
+    try {
+      //check if it is a valid mongoId
+      if (!mongoose.Types.ObjectId.isValid(projectId)) {
+        return handleResponse(
+          res,
+          StatusCodes.BAD_REQUEST,
+          `Invalid project id`
+        );
+      }
+      // Now pageNum is a valid number
+      const result = await this.seoService.compareLastTwoAudits(
+        req.user,
+        projectId
+      );
+
+      console.log(result);
+
+      return handleResponse(
+        res,
+        StatusCodes.CREATED,
+        'SEO audits comparison fetched fetched successfully',
+        { data: result }
       );
     } catch (err) {
       logger.error(`Something went wrong: ${err}`);
@@ -290,7 +325,7 @@ class SeoController {
     const id = req.params.projectId;
     try {
       //check if it is a valid mongoId
-      if (!this.seoService.isValidObjectId(id)) {
+      if (!this.seoService.isValidObjectId(id) === false) {
         return handleResponse(
           res,
           StatusCodes.BAD_REQUEST,
@@ -392,7 +427,7 @@ class SeoController {
         res,
         StatusCodes.CREATED,
         'SEO audit overview fetched successfully',
-        { data: auditOverview.data }
+        { data: auditOverview }
       );
     } catch (err) {
       logger.error(`Something went wrong: ${err}`);

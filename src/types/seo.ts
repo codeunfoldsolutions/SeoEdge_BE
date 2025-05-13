@@ -83,6 +83,13 @@ export interface rerunSeoRequest extends Request {
     id: string;
   };
 }
+
+export interface Categories {
+  performance: number;
+  accessibility: number;
+  bestPractices: number;
+  seo: number;
+}
 // export interface getSeoRequest extends Request {
 //   query: {
 //     page: number;

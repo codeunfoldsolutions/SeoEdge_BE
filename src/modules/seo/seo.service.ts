@@ -9,6 +9,7 @@ import {
   lighthousePDFResponse,
   CategoryEntry,
   AuditEntry,
+  Categories,
 } from '../../types/seo';
 import { Pagination } from '../../utils/pagination';
 import { AuditModel, IAudit, IAuditDocument } from '../../models/audit.model';
@@ -67,6 +68,7 @@ class SeoService {
       throw new Error('Failed to check project existence');
     }
   }
+
   async getProjectOverview(id: string) {
     try {
       // Aggregation pipeline
@@ -215,41 +217,24 @@ class SeoService {
       return { error: 'Failed to create audit entry' };
     }
   }
-  async getAuditOverview(id: string) {
+  async getAuditOverview(ownerId: string) {
     try {
-      const ownerId = new Types.ObjectId(id);
+      const id = new Types.ObjectId(ownerId);
       const [overview] = await this.auditModel
         .aggregate([
-          // 1) Filter to this user
-          { $match: { ownerId } },
-
-          // 2) Group into a single doc
+          { $match: { ownerId: id } },
           {
             $group: {
               _id: null,
-
-              // total number of audit documents
               totalAudits: { $sum: 1 },
-
-              // count only those whose status is 'completed'
               completedAudits: {
-                $sum: {
-                  $cond: [{ $eq: ['$status', 'completed'] }, 1, 0],
-                },
+                $sum: { $cond: [{ $eq: ['$status', 'completed'] }, 1, 0] },
               },
-
-              // average duration: convert string to double
               avgDuration: { $avg: { $toDouble: '$duration' } },
-
-              // sum of all criticalCount fields
               totalIssues: { $sum: '$criticalCount' },
-
-              // average of the overall audit score
               avgImprovement: { $avg: '$score' },
             },
           },
-
-          // 3) Shape the output document, remove _id
           {
             $project: {
               _id: 0,
@@ -263,18 +248,19 @@ class SeoService {
         ])
         .exec();
 
-      // Default to zeroes if no audits exist
-      const result = overview ?? {
-        totalAudits: 0,
-        completedAudits: 0,
-        avgDuration: 0,
-        totalIssues: 0,
-        avgImprovement: 0,
-      };
-      return { data: result };
-    } catch (error) {
-      logger.error(`Error checking project existence: ${error}`);
-      throw new Error('Failed to check project existence');
+      // Default zeros if no data
+      return (
+        overview ?? {
+          totalAudits: 0,
+          completedAudits: 0,
+          avgDuration: 0,
+          totalIssues: 0,
+          avgImprovement: 0,
+        }
+      );
+    } catch (err) {
+      logger.error(`Error computing audit overview: ${err}`);
+      throw new Error('Failed to get audit overview');
     }
   }
   async findProjectById(id: string) {
@@ -287,12 +273,17 @@ class SeoService {
     }
   }
 
-  async compareLastTwoAudits(ownerId: string) {
+  async compareLastTwoAudits(ownerId: string, projectId: string) {
     try {
       const docs = await this.auditModel
-        .aggregate<IAudit & { createdAt: Date }>([
-          { $match: { ownerId: new Types.ObjectId(ownerId) } },
-          { $sort: { createdAt: -1 } },
+        .aggregate<IAudit & { createdAt?: Date }>([
+          {
+            $match: {
+              ownerId: new Types.ObjectId(ownerId),
+              projectId: new Types.ObjectId(projectId),
+            },
+          },
+          { $sort: { createdAt: -1, id: 1 } },
           { $limit: 2 },
           { $project: { categories: 1, createdAt: 1 } },
         ])
@@ -303,36 +294,34 @@ class SeoService {
         return [];
       }
 
-      const latest = docs[0];
-      const previous = docs[1];
+      const [latest, previous] = docs;
+      const latestCats: Categories = latest.categories;
+      const prevCats: Categories | undefined = previous?.categories;
+      // Create a typed array of keys:
+      const categoryKeys = Object.keys(latestCats) as Array<keyof Categories>;
 
-      return Object.entries(latest.categories).map(([key, currScoreRaw]) => {
+      return categoryKeys.map((key) => {
+        const currScoreRaw = latestCats[key];
         const currPct = currScoreRaw * 100;
         const current = `${Math.round(currPct)}/100`;
 
-        if (!previous) {
-          // Only one audit exists
-          return {
-            category: key,
-            current,
-            change: `+0%`,
-          };
+        if (!prevCats) {
+          return { category: key, current, change: `+0%` };
         }
 
-        // Two audits exist, do full comparison
-        const prevScoreRaw = (previous.categories as any)[key] ?? 0;
+        // Now TypeScript knows `key` is one of the four allowed strings
+        const prevScoreRaw = prevCats[key] ?? 0;
         const prevPct = prevScoreRaw * 100;
-        const difference = currPct - prevPct;
-        const sign = difference >= 0 ? '+' : '';
+        const diff = currPct - prevPct;
+        const sign = diff >= 0 ? '+' : '';
+
         return {
           category: key,
           current,
           previous: `${Math.round(prevPct)}/100`,
-          change: `${sign}${difference.toFixed(1)}%`,
+          change: `${sign}${diff.toFixed(1)}%`,
           direction:
-            difference >= 0
-              ? 'Higher than last audit'
-              : 'Lower than last audit',
+            diff >= 0 ? 'Higher than last audit' : 'Lower than last audit',
         };
       });
     } catch (error) {
@@ -567,6 +556,7 @@ class SeoService {
   }
 
   async isValidObjectId(id: string): Promise<boolean> {
+    console.log(mongoose.Types.ObjectId.isValid(id));
     return mongoose.Types.ObjectId.isValid(id);
   }
 

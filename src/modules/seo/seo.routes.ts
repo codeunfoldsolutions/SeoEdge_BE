@@ -34,6 +34,18 @@ SeoRouter.post(
   seoController.handleNewProject.bind(seoController)
 );
 
+// Gets audits comparisons
+SeoRouter.get(
+  '/dashboard/compare/:projectId',
+  verifyJWT,
+  seoController.handleCompareRecentAudits.bind(seoController)
+);
+//Get's audit overview
+SeoRouter.get(
+  '/audits/overview',
+  verifyJWT,
+  seoController.handleGetAuditOverview.bind(seoController)
+);
 //Gets all audits
 SeoRouter.get(
   '/audits/all',
