@@ -73,6 +73,22 @@ export interface pdfGenerationRequest extends Request {
     id: string;
   };
 }
+export interface runAuditRequest extends Request {
+  params: {
+    projectId: string;
+  };
+}
+export interface rerunSeoRequest extends Request {
+  params: {
+    id: string;
+  };
+}
+// export interface getSeoRequest extends Request {
+//   query: {
+//     page: number;
+//     limit: number;
+//   };
+// }
 
 export interface lighthouseDashResponse {
   categories: {

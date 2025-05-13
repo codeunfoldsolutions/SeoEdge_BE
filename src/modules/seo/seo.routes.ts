@@ -1,37 +1,62 @@
 import { Router } from 'express';
 import { validateData, verifyJWT } from '../../middlewares';
-import { seoCreationRequest, pdfGenerationRequest } from './seo.validation';
+import {
+  seoCreationRequest,
+  pdfGenerationRequest,
+  runAuditRequest,
+} from './seo.validation';
 import SeoController from './seo.controller';
 import SeoService from './seo.service';
 
 const SeoRouter = Router();
 const seoController = new SeoController(SeoService.getInstance());
 
-// Create new seo project
-SeoRouter.post(
-  '/create',
-  verifyJWT,
-  validateData(seoCreationRequest),
-  seoController.handleCreateSeo.bind(seoController)
-);
 //Get Seo Dashboard
 SeoRouter.get(
-  '/dashboard',
-  verifyJWT
-  // seoController.handleGetDashboard.bind(seoController)
-);
-// Get all seo projects
-SeoRouter.get(
-  '/all',
+  '/dashboard/project',
   verifyJWT,
-  seoController.handleGetAll.bind(seoController)
+  seoController.handleGetProjectsForDash.bind(seoController)
+);
+
+// Get all projects
+SeoRouter.get(
+  '/projects/all',
+  verifyJWT,
+  seoController.handleGetAllProjects.bind(seoController)
+);
+//Get's project overview
+SeoRouter.get(
+  '/project/overview',
+  verifyJWT,
+  seoController.handleGetProjectOverview.bind(seoController)
+);
+// Create new seo project
+SeoRouter.post(
+  '/project/create',
+  verifyJWT,
+  validateData(seoCreationRequest),
+  seoController.handleNewProject.bind(seoController)
+);
+
+//Gets all audits
+SeoRouter.get(
+  '/audits/all',
+  verifyJWT,
+  seoController.handleGetAllAudits.bind(seoController)
+);
+// Run audit
+SeoRouter.get(
+  '/audit/:projectId',
+  verifyJWT,
+  validateData(runAuditRequest),
+  seoController.handleRunAudit.bind(seoController)
 );
 
 //create pdf report
 SeoRouter.get(
   '/pdf/:id',
   verifyJWT,
-  // validateData(pdfGenerationRequest),
+  validateData(pdfGenerationRequest),
   seoController.handleGeneratePdf.bind(seoController)
 );
 

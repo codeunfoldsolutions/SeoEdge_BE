@@ -8,57 +8,57 @@ export interface ISeo {
   title: string;
   description: string;
   keywords: string[];
-  criticalCount: number;
+  criticalCount?: number;
   active?: boolean;
-  lastAudit?: Date;
-  categories: {
-    performance: number;
-    accessibility: number;
-    bestPractices: number;
-    seo: number;
-  };
-  audits: {
-    'is-on-https': {
-      score: number;
-      description: string;
-    };
-    'redirects-http': {
-      score: number;
-      description: string;
-    };
-    viewport: {
-      score: number;
-      description: string;
-    };
-    'first-contentful-paint': {
-      score: number;
-      displayValue: string;
-      description: string;
-    };
-    'first-meaningful-paint': {
-      score: number;
-      description: string;
-    };
-    speedIndex: {
-      score: number;
-      displayValue: string;
-      description: string;
-    };
-    'errors-in-console': {
-      score: number;
-      description: string;
-    };
-    interactive: {
-      score: number;
-      displayValue: string;
-      description: string;
-    };
-    'bootup-time': {
-      score: number;
-      displayValue: string;
-      description: string;
-    };
-  };
+  score?: number;
+  // categories: {
+  //   performance: number;
+  //   accessibility: number;
+  //   bestPractices: number;
+  //   seo: number;
+  // };
+  // audits: {
+  //   'is-on-https': {
+  //     score: number;
+  //     description: string;
+  //   };
+  //   'redirects-http': {
+  //     score: number;
+  //     description: string;
+  //   };
+  //   viewport: {
+  //     score: number;
+  //     description: string;
+  //   };
+  //   'first-contentful-paint': {
+  //     score: number;
+  //     displayValue: string;
+  //     description: string;
+  //   };
+  //   'first-meaningful-paint': {
+  //     score: number;
+  //     description: string;
+  //   };
+  //   speedIndex: {
+  //     score: number;
+  //     displayValue: string;
+  //     description: string;
+  //   };
+  //   'errors-in-console': {
+  //     score: number;
+  //     description: string;
+  //   };
+  //   interactive: {
+  //     score: number;
+  //     displayValue: string;
+  //     description: string;
+  //   };
+  //   'bootup-time': {
+  //     score: number;
+  //     displayValue: string;
+  //     description: string;
+  //   };
+  // };
 }
 
 const AuditDetailSchema = new Schema(
@@ -122,9 +122,9 @@ const seoSchema = new Schema<ISeoDocument>(
       default: true,
       required: true,
     },
-    lastAudit: {
-      type: Date,
-      default: new Date(),
+    score: {
+      type: Number,
+      default: 0,
       required: true,
     },
     description: {
@@ -133,17 +133,18 @@ const seoSchema = new Schema<ISeoDocument>(
     },
     criticalCount: {
       type: Number,
+      default: 0,
       // required: true
     },
     keywords: [{ type: String }],
-    categories: {
-      type: CategoriesSchema,
-      required: true,
-    },
-    audits: {
-      type: AuditsSchema,
-      required: true,
-    },
+    // categories: {
+    //   type: CategoriesSchema,
+    //   required: true,
+    // },
+    // audits: {
+    //   type: AuditsSchema,
+    //   required: true,
+    // },
   },
   {
     timestamps: true,

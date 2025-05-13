@@ -9,6 +9,16 @@ export const seoCreationRequest = z.object({
 
 export const pdfGenerationRequest = z.object({
   params: z.object({
-    id: z.string().min(23, 'Invalid ID'),
+    id: z.string().min(20, 'Invalid ID'),
+  }),
+});
+export const rerunSeoRequest = z.object({
+  params: z.object({
+    id: z.string().min(20, 'Invalid ID'),
+  }),
+});
+export const runAuditRequest = z.object({
+  params: z.object({
+    projectId: z.string().min(20, 'Invalid ID'),
   }),
 });

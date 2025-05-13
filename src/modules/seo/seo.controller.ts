@@ -1,7 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import logger from '../../config/logger';
 import { StatusCodes } from 'http-status-codes';
-import type { seoCreationRequest, pdfGenerationRequest } from '../../types/seo';
+import type {
+  seoCreationRequest,
+  pdfGenerationRequest,
+  rerunSeoRequest,
+  runAuditRequest,
+} from '../../types/seo';
 import SeoService from './seo.service';
 import { handleResponse } from '../../utils';
 
@@ -12,7 +17,96 @@ class SeoController {
     this.seoService = seoService;
   }
 
-  public async handleCreateSeo(
+  async handleGetProjectsForDash(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const rawPage = req.query.page;
+      let pageNum = 0;
+
+      if (typeof rawPage === 'string') {
+        const parsed = Number(rawPage);
+        pageNum = Number.isNaN(parsed) ? 0 : parsed;
+      }
+
+      // Now pageNum is a valid number
+      const existingSeo = await this.seoService.findProjects(
+        req.user,
+        'dash',
+        pageNum
+      );
+
+      return handleResponse(
+        res,
+        StatusCodes.CREATED,
+        'SEO dashboard fetched successfully',
+        { data: existingSeo.data, info: existingSeo.info }
+      );
+    } catch (err) {
+      logger.error(`Something went wrong: ${err}`);
+      next(err);
+    }
+  }
+
+  async handleGetAllProjects(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const rawPage = req.query.page;
+      let pageNum = 0;
+
+      if (typeof rawPage === 'string') {
+        const parsed = Number(rawPage);
+        pageNum = Number.isNaN(parsed) ? 0 : parsed;
+      }
+
+      // Now pageNum is a valid number
+      const existingSeo = await this.seoService.findProjects(
+        req.user,
+        'all',
+        pageNum
+      );
+
+      return handleResponse(
+        res,
+        StatusCodes.CREATED,
+        'SEO projects fetched successfully',
+        { data: existingSeo.data, info: existingSeo.info }
+      );
+    } catch (err) {
+      logger.error(`Something went wrong: ${err}`);
+      next(err);
+    }
+  }
+
+  async handleGetProjectOverview(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      // Now pageNum is a valid number
+      const projectOverview = await this.seoService.getProjectOverview(
+        req.user
+      );
+
+      return handleResponse(
+        res,
+        StatusCodes.CREATED,
+        'SEO projects overview fetched successfully',
+        { data: projectOverview.data }
+      );
+    } catch (err) {
+      logger.error(`Something went wrong: ${err}`);
+      next(err);
+    }
+  }
+
+  public async handleNewProject(
     req: seoCreationRequest,
     res: Response,
     next: NextFunction
@@ -33,21 +127,21 @@ class SeoController {
           `You already have an entry for ${url}`
         );
       }
-      // Generate Light House Seo
-      const lightResponse = await this.seoService.lightHouseGenerateDashReport(
-        url
-      );
+      // // Generate Light House Seo
+      // const lightResponse = await this.seoService.lightHouseGenerateDashReport(
+      //   url
+      // );
 
-      // Check if an error occurred during light house creation
+      // // Check if an error occurred during light house creation
 
-      if (lightResponse?.error) {
-        return handleResponse(
-          res,
-          StatusCodes.BAD_REQUEST,
-          `Lighthouse audit failed for ${url}`,
-          { error: lightResponse.error }
-        );
-      }
+      // if (lightResponse?.error) {
+      //   return handleResponse(
+      //     res,
+      //     StatusCodes.BAD_REQUEST,
+      //     `Lighthouse audit failed for ${url}`,
+      //     { error: lightResponse.error }
+      //   );
+      // }
 
       const seoData = {
         ownerId: req.user,
@@ -55,48 +149,187 @@ class SeoController {
         title,
         description,
         keywords,
-        categories: lightResponse!.categories!,
-        audits: lightResponse!.audits!,
-        criticalCount: lightResponse!.criticalCount!,
+        // categories: lightResponse!.categories!,
+        // audits: lightResponse!.audits!,
+        // criticalCount: lightResponse!.criticalCount!,
       };
 
       //create new seo entry
-      const newSeo = await this.seoService.createNewSeoEntry(seoData);
+      const newProject = await this.seoService.createNewSeoProject(seoData);
 
       // Check if an error occurred during seo entry creation
-      if (newSeo?.error) {
+      if (newProject?.error) {
         return handleResponse(
           res,
           StatusCodes.BAD_REQUEST,
           `Failed to create SEO entry`,
-          { error: newSeo.error }
+          { error: newProject.error }
         );
       }
 
       return handleResponse(
         res,
         StatusCodes.CREATED,
-        'New Seo created successfully',
-        { data: newSeo.data }
+        'New Project created successfully',
+        { data: newProject.data }
       );
     } catch (err) {
       logger.error(`Something went wrong: ${err}`);
       next(err);
     }
   }
-  async handleGetAll(
+
+  async handleGetAllAudits(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const id = req.params.ownerId;
+    try {
+      const rawPage = req.query.page;
+      let pageNum = 0;
+
+      if (typeof rawPage === 'string') {
+        const parsed = Number(rawPage);
+        pageNum = Number.isNaN(parsed) ? 0 : parsed;
+      }
+
+      // Check if project exists
+      const existingProject = await this.seoService.findProjectById(id);
+
+      if (existingProject?.data?.length !== 1) {
+        return handleResponse(
+          res,
+          StatusCodes.NOT_FOUND,
+          `Project doesn't exist`
+        );
+      }
+
+      //fetch all project audits
+      const audits = await this.seoService.findAllAudits(id, pageNum);
+      if (audits?.error) {
+        return handleResponse(
+          res,
+          StatusCodes.NOT_FOUND,
+          `Audits history coudln't be found`
+        );
+      }
+
+      return handleResponse(
+        res,
+        StatusCodes.CREATED,
+        'Audits fetched successfully',
+        { data: audits.data, info: audits.info }
+      );
+    } catch (err) {
+      logger.error(`Something went wrong: ${err}`);
+      next(err);
+    }
+  }
+
+  public async handleRunAudit(
+    req: runAuditRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const id = req.params.projectId;
+    try {
+      // check if user the already has an entry in the system
+      const existingProject = await this.seoService.findProjectById(id);
+
+      if (existingProject?.data?.length !== 1) {
+        return handleResponse(
+          res,
+          StatusCodes.NOT_FOUND,
+          `Project doesn't exist`
+        );
+      }
+
+      // Generate Light House Seo
+      const lightResponse = await this.seoService.lightHouseGenerateAudit(
+        existingProject.data[0].url
+      );
+
+      // Check if an error occurred during light house creation
+      if (lightResponse?.error) {
+        return handleResponse(
+          res,
+          StatusCodes.BAD_REQUEST,
+          `Lighthouse audit failed for ${existingProject.data[0].url}`,
+          { error: lightResponse.error }
+        );
+      }
+
+      const auditData = {
+        ownerId: req.user,
+        projectId: existingProject.data[0].id,
+        duration: `${lightResponse!.durationMs}`,
+        status: 'completed',
+        score: lightResponse!.score as number,
+        categories: lightResponse!.categories!,
+        audits: lightResponse!.audits!,
+        criticalCount: lightResponse!.criticalCount!,
+      };
+
+      //create new audit entry
+      const newAudit = await this.seoService.createNewAudit(auditData);
+
+      // Check if an error occurred during seo entry creation
+      if (newAudit?.error) {
+        return handleResponse(
+          res,
+          StatusCodes.BAD_REQUEST,
+          `Failed to create SEO entry`,
+          { error: newAudit.error }
+        );
+      }
+
+      //update score and issues on the main data
+      const data = {
+        score: lightResponse!.score,
+        criticalCount: lightResponse!.criticalCount,
+      };
+
+      const updatedProject = await this.seoService.updateSeoEntry(
+        existingProject.data[0].id,
+        data
+      );
+      // Check if an error occurred during seo entry creation
+      if (updatedProject?.error) {
+        return handleResponse(
+          res,
+          StatusCodes.BAD_REQUEST,
+          `Failed to update SEO entry`,
+          { error: updatedProject.error }
+        );
+      }
+
+      return handleResponse(
+        res,
+        StatusCodes.CREATED,
+        'New Audit created successfully',
+        { data: newAudit.data, fake: updatedProject.data }
+      );
+    } catch (err) {
+      logger.error(`Something went wrong: ${err}`);
+      next(err);
+    }
+  }
+
+  async handleGetAuditOverview(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
     try {
-      const existingSeo = await this.seoService.findProjects(req.user);
+      // Now pageNum is a valid number
+      const auditOverview = await this.seoService.getAuditOverview(req.user);
 
       return handleResponse(
         res,
         StatusCodes.CREATED,
-        'SEO project fetched successfully',
-        { data: existingSeo.data }
+        'SEO audit overview fetched successfully',
+        { data: auditOverview.data }
       );
     } catch (err) {
       logger.error(`Something went wrong: ${err}`);
