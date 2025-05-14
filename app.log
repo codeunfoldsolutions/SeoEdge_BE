@@ -524,3 +524,12 @@
 {"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-13T19:30:50.991Z"}
 {"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-13T19:30:51.003Z"}
 {"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/v1/api/seo/dashboard/compare/682378120dd1f22ce38149a9\",\"status\":\"201\",\"responseTime\":\"54.305\"}","timestamp":"2025-05-13T19:31:19.842Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-07T08:25:52.901Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 8080 ⚡","timestamp":"2025-05-07T08:25:52.909Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-07T08:27:17.338Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 8080 ⚡","timestamp":"2025-05-07T08:27:17.345Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-07T08:28:16.239Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 8080 ⚡","timestamp":"2025-05-07T08:28:16.245Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-07T08:36:20.585Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 8080 ⚡","timestamp":"2025-05-07T08:36:20.595Z"}
+
