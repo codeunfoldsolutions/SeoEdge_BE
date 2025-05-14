@@ -8,6 +8,8 @@ export interface ISeo {
   description: string;
   keywords: string[];
   criticalCount: number;
+  active?: boolean;
+  lastAudit?: Date;
   categories: {
     performance: number;
     accessibility: number;
@@ -71,6 +73,29 @@ export interface pdfGenerationRequest extends Request {
     id: string;
   };
 }
+export interface runAuditRequest extends Request {
+  params: {
+    projectId: string;
+  };
+}
+export interface rerunSeoRequest extends Request {
+  params: {
+    id: string;
+  };
+}
+
+export interface Categories {
+  performance: number;
+  accessibility: number;
+  bestPractices: number;
+  seo: number;
+}
+// export interface getSeoRequest extends Request {
+//   query: {
+//     page: number;
+//     limit: number;
+//   };
+// }
 
 export interface lighthouseDashResponse {
   categories: {

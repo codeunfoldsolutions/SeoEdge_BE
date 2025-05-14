@@ -7,24 +7,64 @@ import SeoService from './seo.service';
 const SeoRouter = Router();
 const seoController = new SeoController(SeoService.getInstance());
 
-// Create new seo project
-SeoRouter.post(
-  '/create',
-  verifyJWT,
-  validateData(seoCreationRequest),
-  seoController.handleCreateSeo.bind(seoController)
-);
 //Get Seo Dashboard
 SeoRouter.get(
-  '/dashboard',
-  verifyJWT
-  // seoController.handleGetDashboard.bind(seoController)
-);
-// Get all seo projects
-SeoRouter.get(
-  '/all',
+  '/dashboard/project',
   verifyJWT,
-  seoController.handleGetAll.bind(seoController)
+  seoController.handleGetProjectsForDash.bind(seoController)
+);
+
+// Get all projects
+SeoRouter.get(
+  '/projects/all',
+  verifyJWT,
+  seoController.handleGetAllProjects.bind(seoController)
+);
+//Get's project overview
+SeoRouter.get(
+  '/project/overview',
+  verifyJWT,
+  seoController.handleGetProjectOverview.bind(seoController)
+);
+// Create new seo project
+SeoRouter.post(
+  '/project/create',
+  verifyJWT,
+  validateData(seoCreationRequest),
+  seoController.handleNewProject.bind(seoController)
+);
+
+// Gets audits comparisons
+SeoRouter.get(
+  '/dashboard/compare/:projectId',
+  verifyJWT,
+  seoController.handleCompareRecentAudits.bind(seoController)
+);
+//Get's audit overview
+SeoRouter.get(
+  '/audits/overview',
+  verifyJWT,
+  seoController.handleGetAuditOverview.bind(seoController)
+);
+//Gets all audits
+SeoRouter.get(
+  '/audits/all',
+  verifyJWT,
+  seoController.handleGetAllAudits.bind(seoController)
+);
+
+//Gets all audits for a project
+SeoRouter.get(
+  '/audits/:projectId',
+  verifyJWT,
+  seoController.handleGetsAuditsForProject.bind(seoController)
+);
+// Runs audit
+SeoRouter.post(
+  '/audits/:projectId',
+  verifyJWT,
+  // validateData(runAuditRequest),
+  seoController.handleRunAudit.bind(seoController)
 );
 
 //create pdf report
@@ -34,13 +74,5 @@ SeoRouter.get(
   // validateData(pdfGenerationRequest),
   seoController.handleGeneratePdf.bind(seoController)
 );
-
-// // Get seo project by id
-// SeoRouter.post(
-//   '/create',
-//   verifyJWT,
-//   validateData(seoCreationSchema),
-//   seoController.handleCreateSeo.bind(seoController)
-// );
 
 export default SeoRouter;

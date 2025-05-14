@@ -1,7 +1,7 @@
 import { launch } from 'chrome-launcher';
 import { Response } from 'express';
 import lighthouse from 'lighthouse';
-import mongoose, { Model, mongo } from 'mongoose';
+import mongoose, { Model, mongo, Types } from 'mongoose';
 import { ISeo, ISeoDocument, SeoModel } from '../../models/seo.model';
 import logger from '../../config/logger';
 import PDFDocument from 'pdfkit';
@@ -9,14 +9,19 @@ import {
   lighthousePDFResponse,
   CategoryEntry,
   AuditEntry,
+  Categories,
 } from '../../types/seo';
+import { Pagination } from '../../utils/pagination';
+import { AuditModel, IAudit, IAuditDocument } from '../../models/audit.model';
 
 class SeoService {
   private static instance: SeoService;
   private seoModel: Model<ISeoDocument>;
+  private auditModel: Model<IAuditDocument>;
 
   private constructor() {
     this.seoModel = SeoModel;
+    this.auditModel = AuditModel;
   }
 
   public static getInstance(): SeoService {
@@ -26,7 +31,92 @@ class SeoService {
     return SeoService.instance;
   }
 
-  async createNewSeoEntry(data: ISeo) {
+  async findProjects(id: string, type: string, page?: string | number) {
+    try {
+      let pagination;
+      if (type === 'dash') {
+        pagination = new Pagination(5, page ? +page : 1);
+      }
+      if (type === 'all') {
+        pagination = new Pagination(15, page ? +page : 1);
+      }
+
+      // console.log(pagination?.skip + 'skip', pagination?.limit + 'limit');
+      // inside your async method
+      const baseQuery = this.seoModel
+        .find({ ownerId: id })
+        .sort({ createdAt: -1 });
+
+      const paginatedQuery = pagination
+        ? baseQuery.skip(pagination.skip).limit(pagination.limit)
+        : baseQuery;
+
+      const project = await paginatedQuery.exec();
+
+      const info = pagination!.getPaginationInfo(project.length);
+
+      const pageItems = pagination
+        ? project.slice(0, pagination.perPage)
+        : project;
+
+      return {
+        data: project ? pageItems : [],
+        info: project ? info : '',
+      };
+    } catch (error) {
+      logger.error(`Error checking project existence: ${error}`);
+      throw new Error('Failed to check project existence');
+    }
+  }
+
+  async getProjectOverview(id: string) {
+    try {
+      // Aggregation pipeline
+      const ownerId = new Types.ObjectId(id);
+      const [overview] = await this.seoModel
+        .aggregate<{
+          totalProjects: number;
+          activeProjects: number;
+          totalIssues: number;
+          averageScore: number;
+        }>([
+          { $match: { ownerId } }, // restrict to this user’s docs
+          {
+            $group: {
+              _id: null,
+              totalProjects: { $sum: 1 }, // count all docs
+              activeProjects: { $sum: { $cond: ['$active', 1, 0] } }, // count where active===true
+              totalIssues: { $sum: '$criticalCount' }, // sum all criticalCount fields
+              averageScore: { $avg: '$score' }, // avg of score fields
+            },
+          },
+          {
+            $project: {
+              _id: 0,
+              totalProjects: 1,
+              activeProjects: 1,
+              totalIssues: 1,
+              // convert averageScore (0–1 scale?) to percent if needed:
+              // averageScore: { $multiply: ['$averageScore', 100] }
+              averageScore: 1,
+            },
+          },
+        ])
+        .exec();
+
+      const result = overview ?? {
+        totalProjects: 0,
+        activeProjects: 0,
+        totalIssues: 0,
+        averageScore: 0,
+      };
+      return { data: result };
+    } catch (error) {
+      logger.error(`Error checking project existence: ${error}`);
+      throw new Error('Failed to check project existence');
+    }
+  }
+  async createNewSeoProject(data: ISeo) {
     try {
       const seoEntry = await this.seoModel.create(data);
       return { data: seoEntry };
@@ -35,13 +125,218 @@ class SeoService {
       return { error: 'Failed to create SEO entry' };
     }
   }
+  async updateSeoEntry(id: string, data: any) {
+    try {
+      const project = await this.seoModel.findByIdAndUpdate(
+        id,
+        {
+          $set: data,
+        },
+        { new: true } // Return the updated document
+      );
+      return { data: project ? [project] : [] };
+    } catch (error) {
+      logger.error(`Error checking project existence: ${error}`);
+      return { error: 'Failed to update Project entry' };
+    }
+  }
+
+  async findAllAudits(id: string, page?: number) {
+    try {
+      let pagination;
+      pagination = new Pagination(10, page ? +page : 1);
+      // inside your async method
+      const baseQuery = this.auditModel
+        .find({ ownerId: id })
+        .populate('projectId')
+        .sort({ createdAt: -1 });
+
+      const paginatedQuery = pagination
+        ? baseQuery.skip(pagination.skip).limit(pagination.limit)
+        : baseQuery;
+
+      const project = await paginatedQuery.exec();
+
+      const info = pagination!.getPaginationInfo(project.length);
+
+      const pageItems = pagination
+        ? project.slice(0, pagination.perPage)
+        : project;
+
+      return {
+        data: project ? pageItems : [],
+        info: project ? info : '',
+      };
+    } catch (error) {
+      logger.error(`Error finding audit history: ${error}`);
+      return { error: 'Failed to create audit entry' };
+    }
+  }
+  async findAllAuditsForProject(
+    ownerId: string,
+    projectId: string,
+    page?: number
+  ) {
+    try {
+      let pagination;
+
+      pagination = new Pagination(10, page ? +page : 1);
+      // inside your async method
+      const baseQuery = this.auditModel
+        .find({
+          ownerId: ownerId,
+          projectId: projectId,
+        })
+        .sort({ createdAt: -1 });
+      const paginatedQuery = pagination
+        ? baseQuery.skip(pagination.skip).limit(pagination.limit)
+        : baseQuery;
+
+      const project = await paginatedQuery.exec();
+
+      const info = pagination!.getPaginationInfo(project.length);
+      const pageItems = pagination
+        ? project.slice(0, pagination.perPage)
+        : project;
+
+      return {
+        data: project ? pageItems : [],
+        info: project ? info : '',
+      };
+    } catch (error) {
+      logger.error(`Error finding audit history: ${error}`);
+      return { error: 'Failed to create audit entry' };
+    }
+  }
+  async createNewAudit(data: IAudit) {
+    try {
+      const auditEntry = await this.auditModel.create(data);
+      return { data: auditEntry };
+    } catch (error) {
+      logger.error(`Error creating new audit entry: ${error}`);
+      return { error: 'Failed to create audit entry' };
+    }
+  }
+  async getAuditOverview(ownerId: string) {
+    try {
+      const id = new Types.ObjectId(ownerId);
+      const [overview] = await this.auditModel
+        .aggregate([
+          { $match: { ownerId: id } },
+          {
+            $group: {
+              _id: null,
+              totalAudits: { $sum: 1 },
+              completedAudits: {
+                $sum: { $cond: [{ $eq: ['$status', 'completed'] }, 1, 0] },
+              },
+              avgDuration: { $avg: { $toDouble: '$duration' } },
+              totalIssues: { $sum: '$criticalCount' },
+              avgImprovement: { $avg: '$score' },
+            },
+          },
+          {
+            $project: {
+              _id: 0,
+              totalAudits: 1,
+              completedAudits: 1,
+              avgDuration: 1,
+              totalIssues: 1,
+              avgImprovement: 1,
+            },
+          },
+        ])
+        .exec();
+
+      // Default zeros if no data
+      return (
+        overview ?? {
+          totalAudits: 0,
+          completedAudits: 0,
+          avgDuration: 0,
+          totalIssues: 0,
+          avgImprovement: 0,
+        }
+      );
+    } catch (err) {
+      logger.error(`Error computing audit overview: ${err}`);
+      throw new Error('Failed to get audit overview');
+    }
+  }
+  async findProjectById(id: string) {
+    try {
+      const project = await this.seoModel.findById(id);
+      return { data: project ? [project] : [] };
+    } catch (error) {
+      logger.error(`Error checking project existence: ${error}`);
+      throw new Error('Failed to check project existence');
+    }
+  }
+
+  async compareLastTwoAudits(ownerId: string, projectId: string) {
+    try {
+      const docs = await this.auditModel
+        .aggregate<IAudit & { createdAt?: Date }>([
+          {
+            $match: {
+              ownerId: new Types.ObjectId(ownerId),
+              projectId: new Types.ObjectId(projectId),
+            },
+          },
+          { $sort: { createdAt: -1, id: 1 } },
+          { $limit: 2 },
+          { $project: { categories: 1, createdAt: 1 } },
+        ])
+        .exec();
+
+      if (docs.length === 0) {
+        // No audits at all
+        return [];
+      }
+
+      const [latest, previous] = docs;
+      const latestCats: Categories = latest.categories;
+      const prevCats: Categories | undefined = previous?.categories;
+      // Create a typed array of keys:
+      const categoryKeys = Object.keys(latestCats) as Array<keyof Categories>;
+
+      return categoryKeys.map((key) => {
+        const currScoreRaw = latestCats[key];
+        const currPct = currScoreRaw * 100;
+        const current = `${Math.round(currPct)}/100`;
+
+        if (!prevCats) {
+          return { category: key, current, change: `+0%` };
+        }
+
+        // Now TypeScript knows `key` is one of the four allowed strings
+        const prevScoreRaw = prevCats[key] ?? 0;
+        const prevPct = prevScoreRaw * 100;
+        const diff = currPct - prevPct;
+        const sign = diff >= 0 ? '+' : '';
+
+        return {
+          category: key,
+          current,
+          previous: `${Math.round(prevPct)}/100`,
+          change: `${sign}${diff.toFixed(1)}%`,
+          direction:
+            diff >= 0 ? 'Higher than last audit' : 'Lower than last audit',
+        };
+      });
+    } catch (error) {
+      logger.error(`Error checking audit comparisons : ${error}`);
+      return { error: 'Failed to check audit comparisons' };
+    }
+  }
+
   async getSeoEntries(ownerId: string) {
     try {
       const seoEntries = await this.seoModel.find({ ownerId });
       return { data: seoEntries };
     } catch (error) {
       logger.error(`Error fetching SEO entries: ${error}`);
-      throw new Error('Failed to fetch SEO entries');
+      return { error: 'Failed to fetch SEO entries' };
     }
   }
   async checkIfProjectExists(
@@ -56,30 +351,12 @@ class SeoService {
       return { data: project ? [project] : [] };
     } catch (error) {
       logger.error(`Error checking project existence: ${error}`);
-      throw new Error('Failed to check project existence');
+      return { error: 'Failed to check project existence' };
     }
   }
-  async findProjectById(id: string) {
-    try {
-      const project = await this.seoModel.findById(id);
-      return { data: project ? [project] : [] };
-    } catch (error) {
-      logger.error(`Error checking project existence: ${error}`);
-      throw new Error('Failed to check project existence');
-    }
-  }
-  async findProjects(id: string) {
-    try {
-      const project = await this.seoModel
-        .find({ ownerId: id })
-        .select('-categories -audits');
-      return { data: project ? [project] : [] };
-    } catch (error) {
-      logger.error(`Error checking project existence: ${error}`);
-      throw new Error('Failed to check project existence');
-    }
-  }
-  async lightHouseGenerateDashReport(url: string) {
+
+  async lightHouseGenerateAudit(url: string) {
+    const start = Date.now();
     try {
       // 1) Launch headless Chrome
       const chrome = await launch({ chromeFlags: ['--headless'] });
@@ -100,6 +377,8 @@ class SeoService {
         throw new Error('Lighthouse audit failed');
       }
       const { categories, audits, fetchTime, requestedUrl } = runnerResult.lhr;
+
+      const durationMs = Date.now() - start;
 
       function firstSentence(text: string): string {
         const match = text.match(/^[^.]*\./);
@@ -157,13 +436,30 @@ class SeoService {
         },
       };
 
+      //gets audit score
+      function getAverageAuditScore(
+        processedAudits: Record<string, { score: number }>
+      ): number {
+        const scores = Object.values(processedAudits).map(
+          (item) => item.score ?? 0
+        );
+
+        const count = scores.length;
+        if (count === 0) return 0;
+
+        const total = scores.reduce((sum, s) => sum + s, 0);
+        const average = total / count;
+
+        // Round to two decimal places and convert back to Number
+        return Number(average.toFixed(2));
+      }
+
+      const score = getAverageAuditScore(processedAudits);
+
       // Count critical issues (score < 0.5 or score == 0)
-      const criticalCount = Object.values(processedAudits).reduce(
-        (count, a) => {
-          return count + (a.score === null || a.score < 0.5 ? 1 : 0);
-        },
-        0
-      );
+      const criticalCount = Object.values(audits).reduce((count, a) => {
+        return count + (a.score === null || a.score < 0.5 ? 1 : 0);
+      }, 0);
 
       return {
         categories: {
@@ -174,6 +470,8 @@ class SeoService {
         },
         audits: processedAudits,
         criticalCount,
+        score,
+        durationMs,
       };
     } catch (error: any) {
       logger.error(`Error generating Lighthouse report: ${error}`);
@@ -214,7 +512,7 @@ class SeoService {
   }
 
   async createPdfReport(report: lighthousePDFResponse, res: Response) {
-    const { audits, categories } = report;
+    const { audits, categories, url } = report;
 
     try {
       // Classify audits dynamically
@@ -255,6 +553,11 @@ class SeoService {
       logger.error(`Error generating Lighthouse PDF report: ${error}`);
       return { error: 'Failed to generate Lighthouse PDF report' };
     }
+  }
+
+  async isValidObjectId(id: string): Promise<boolean> {
+    console.log(mongoose.Types.ObjectId.isValid(id));
+    return mongoose.Types.ObjectId.isValid(id);
   }
 
   private async writeCategorySection(
