@@ -16,7 +16,7 @@ SeoRouter.get(
 
 // Get all projects
 SeoRouter.get(
-  '/projects/all',
+  '/project/all',
   verifyJWT,
   seoController.handleGetAllProjects.bind(seoController)
 );
