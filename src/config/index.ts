@@ -3,7 +3,7 @@ import { CorsOptions } from "cors";
 import connectDB from "./db";
 
 // Base allowed origins
-const allowedOrigins = ["http://localhost:3000"];
+const allowedOrigins = ["http://localhost:3000", "https://seoedge.netlify.app"];
 
 class Config {
   PORT: number;
