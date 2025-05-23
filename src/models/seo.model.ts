@@ -6,6 +6,7 @@ export interface ISeo {
   ownerId: IUserDocument;
   url: string;
   title: string;
+  type: string;
   description: string;
   keywords: string[];
   criticalCount?: number;
@@ -114,6 +115,10 @@ const seoSchema = new Schema<ISeoDocument>(
       unique: true,
     },
     title: {
+      type: String,
+      // required: true
+    },
+    type: {
       type: String,
       // required: true
     },

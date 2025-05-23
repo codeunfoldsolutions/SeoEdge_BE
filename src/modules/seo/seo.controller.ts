@@ -141,7 +141,13 @@ class SeoController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const { url, title, description = '', keywords = [] } = req.body;
+      const {
+        url,
+        title,
+        description = '',
+        keywords = [],
+        type = '',
+      } = req.body;
 
       // check if user the already has an entry in the system
       const existingSeo = await this.seoService.checkIfProjectExists(req.user, {
@@ -187,6 +193,7 @@ class SeoController {
         title,
         description,
         keywords,
+        type,
         // categories: lightResponse!.categories!,
         // audits: lightResponse!.audits!,
         // criticalCount: lightResponse!.criticalCount!,

@@ -64,6 +64,7 @@ export interface seoCreationRequest extends Request {
   body: {
     url: string;
     title: string;
+    type: string;
     description: string;
     keywords: string[];
   };
