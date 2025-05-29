@@ -533,3 +533,26 @@
 {"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-07T08:36:20.585Z"}
 {"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 8080 ⚡","timestamp":"2025-05-07T08:36:20.595Z"}
 
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-29T08:45:34.889Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-29T08:45:34.898Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-29T08:47:45.562Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-29T08:47:45.579Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-29T08:48:27.315Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-29T08:48:27.329Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/login\",\"status\":\"200\",\"responseTime\":\"96.305\"}","timestamp":"2025-05-29T08:49:02.858Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/v1/api/seo/project/all\",\"status\":\"401\",\"responseTime\":\"10.615\"}","timestamp":"2025-05-29T08:49:16.796Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/login\",\"status\":\"200\",\"responseTime\":\"15.483\"}","timestamp":"2025-05-29T08:49:24.594Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/v1/api/seo/project/all\",\"status\":\"401\",\"responseTime\":\"7.245\"}","timestamp":"2025-05-29T08:49:42.371Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-29T08:51:15.473Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-29T08:51:15.485Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/v1/api/seo/project/all\",\"status\":\"401\",\"responseTime\":\"16.209\"}","timestamp":"2025-05-29T08:51:19.581Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-29T08:52:24.469Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-29T08:52:24.478Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/login\",\"status\":\"200\",\"responseTime\":\"78.839\"}","timestamp":"2025-05-29T08:53:22.936Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/auth/login\",\"status\":\"200\",\"responseTime\":\"18.783\"}","timestamp":"2025-05-29T09:01:07.070Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/v1/api/seo/project/all\",\"status\":\"201\",\"responseTime\":\"65.667\"}","timestamp":"2025-05-29T09:01:18.770Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/seo/audits/682378120dd1f22ce38149a9\",\"status\":\"201\",\"responseTime\":\"39637.237\"}","timestamp":"2025-05-29T09:02:13.882Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-29T09:19:42.078Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-29T09:19:42.089Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-29T09:21:04.410Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-29T09:21:04.418Z"}

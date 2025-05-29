@@ -359,9 +359,11 @@ class SeoService {
     const start = Date.now();
     try {
       // 1) Launch headless Chrome
-      const chrome = await launch({ chromeFlags: ['--headless'] });
+      const chrome = await launch({
+        chromeFlags: ['--headless', '--no-sandbox', '--disable-gpu'],
+      });
       const options = {
-        logLevel: 'info' as const,
+        logLevel: 'verbose' as const,
         port: chrome.port,
         output: 'json' as const,
       };
