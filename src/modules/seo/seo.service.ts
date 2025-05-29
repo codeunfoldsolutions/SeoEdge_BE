@@ -1,7 +1,7 @@
-import { launch } from 'chrome-launcher';
-import puppeteer from 'puppeteer';
+import { launch, LaunchedChrome } from 'chrome-launcher';
 import { Response } from 'express';
 import lighthouse from 'lighthouse';
+import puppeteer, { Browser } from 'puppeteer-core';
 import mongoose, { Model, mongo, Types } from 'mongoose';
 import { ISeo, ISeoDocument, SeoModel } from '../../models/seo.model';
 import logger from '../../config/logger';
@@ -358,165 +358,57 @@ class SeoService {
 
   async lightHouseGenerateAudit(url: string) {
     const start = Date.now();
-    let browser;
-
     try {
-      // Launch headless Chrome using Puppeteer
-      browser = await puppeteer.launch({
-        headless: true,
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage',
-        ],
-      });
+      let options: any = {};
+      let chromeInstance: LaunchedChrome | null = null;
+      // let puppeteerInstance: Browser | null = null;
 
-      // Extract the WebSocket endpoint to connect Lighthouse
-      const wsEndpoint = browser.wsEndpoint();
-      const wsUrl = new URL(wsEndpoint);
-      const port = parseInt(wsUrl.port, 10);
+      if (process.env.NODE_ENV === 'development') {
+        chromeInstance = await launch({
+          chromeFlags: [
+            '--headless',
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--single-process',
+            '--no-zygote',
+          ],
+        });
 
-      const options = {
-        logLevel: 'info' as const,
-        output: 'json' as const,
-        port,
-      };
+        options = {
+          logLevel: 'verbose' as const,
+          port: chromeInstance.port,
+          output: 'json' as const,
+        };
+      } else {
+        chromeInstance = await launch({
+          chromeFlags: [
+            '--headless',
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+          ],
+          // <-- tell chrome-launcher where to find chromium
+          chromePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium',
+        });
 
-      // const options = {
-      //   logLevel: 'verbose' as const,
-      //   port: chrome.port,
-      //   output: 'json' as const,
-      // };
-
-      // Run Lighthouse audit
-      const runnerResult = await lighthouse(url, options);
-
-      // Extract relevant data
-      if (!runnerResult || !runnerResult.lhr) {
-        throw new Error('Lighthouse audit failed');
+        options = {
+          logLevel: 'verbose' as const,
+          port: chromeInstance.port,
+          output: 'json' as const,
+        };
       }
-
-      const { categories, audits } = runnerResult.lhr;
-      const durationMs = Date.now() - start;
-
-      // Helper to extract the first sentence from a description
-      function firstSentence(text: string): string {
-        const match = text.match(/^[^.]*\./);
-        return match ? match[0] : text;
-      }
-
-      // Process selected audits
-      const processedAudits = {
-        'is-on-https': {
-          score: audits['is-on-https']?.score ?? 0,
-          description: firstSentence(audits['is-on-https']?.description ?? ''),
-        },
-        'redirects-http': {
-          score: audits['redirects-http']?.score ?? 0,
-          description: firstSentence(
-            audits['redirects-http']?.description ?? ''
-          ),
-        },
-        viewport: {
-          score: audits.viewport?.score ?? 0,
-          description: firstSentence(audits.viewport?.description ?? ''),
-        },
-        'first-contentful-paint': {
-          score: audits['first-contentful-paint']?.score ?? 0,
-          displayValue: audits['first-contentful-paint']?.displayValue ?? '',
-          description: firstSentence(
-            audits['first-contentful-paint']?.description ?? ''
-          ),
-        },
-        'first-meaningful-paint': {
-          score: audits['first-meaningful-paint']?.score ?? 0,
-          description: firstSentence(
-            audits['first-meaningful-paint']?.description ?? ''
-          ),
-        },
-        'speed-index': {
-          score: audits['speed-index']?.score ?? 0,
-          displayValue: audits['speed-index']?.displayValue ?? '',
-          description: firstSentence(audits['speed-index']?.description ?? ''),
-        },
-        'errors-in-console': {
-          score: audits['errors-in-console']?.score ?? 0,
-          description: firstSentence(
-            audits['errors-in-console']?.description ?? ''
-          ),
-        },
-        interactive: {
-          score: audits.interactive?.score ?? 0,
-          displayValue: audits.interactive?.displayValue ?? '',
-          description: firstSentence(audits.interactive?.description ?? ''),
-        },
-        'bootup-time': {
-          score: audits['bootup-time']?.score ?? 0,
-          displayValue: audits['bootup-time']?.displayValue ?? '',
-          description: firstSentence(audits['bootup-time']?.description ?? ''),
-        },
-      };
-
-      // Calculate average audit score
-      const scores = Object.values(processedAudits).map(
-        (item) => item.score ?? 0
-      );
-      const averageScore = scores.length
-        ? Number(
-            (scores.reduce((sum, s) => sum + s, 0) / scores.length).toFixed(2)
-          )
-        : 0;
-
-      // Count critical issues (score < 0.5 or score == 0)
-      const criticalCount = Object.values(audits).reduce((count, a) => {
-        return count + (a.score === null || a.score < 0.5 ? 1 : 0);
-      }, 0);
-
-      return {
-        categories: {
-          performance: categories.performance?.score ?? 0,
-          accessibility: categories.accessibility?.score ?? 0,
-          seo: categories.seo?.score ?? 0,
-          bestPractices: categories['best-practices']?.score ?? 0,
-        },
-        audits: processedAudits,
-        criticalCount,
-        score: averageScore,
-        durationMs,
-      };
-    } catch (error: any) {
-      console.error(`Error generating Lighthouse report: ${error}`);
-      return { error: 'Failed to generate Lighthouse report' };
-    } finally {
-      if (browser) {
-        await browser.close();
-      }
-    }
-  }
-
-  async lightHouseGenerateAuditOld(url: string) {
-    const start = Date.now();
-    try {
-      // 1) Launch headless Chrome
-      const chrome = await launch({
-        chromeFlags: [
-          '--headless',
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage',
-        ],
-      });
-      const options = {
-        logLevel: 'verbose' as const,
-        port: chrome.port,
-        output: 'json' as const,
-      };
 
       // 2) Run Lighthouse audit
       const runnerResult = await lighthouse(url, options);
 
       // 3) Kill Chrome
-      await chrome.kill();
+      // Clean up browser instances
+      if (chromeInstance) {
+        await chromeInstance.kill();
+      }
+      // await chrome.kill();
+      // await browser.close();
 
       // 4) Extract relevant categories
       if (!runnerResult || !runnerResult.lhr) {
@@ -620,7 +512,10 @@ class SeoService {
         durationMs,
       };
     } catch (error: any) {
-      logger.error(`Error generating Lighthouse report: ${error}`);
+      logger.error(
+        `Error generating Lighthouse report: ${error.message}`,
+        error.stack
+      );
       return { error: 'Failed to generate Lighthouse report' };
     }
   }
