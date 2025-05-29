@@ -556,3 +556,17 @@
 {"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-29T09:19:42.089Z"}
 {"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-29T09:21:04.410Z"}
 {"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-29T09:21:04.418Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-29T09:24:39.831Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-29T09:24:39.838Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-29T09:25:42.911Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-29T09:25:42.919Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/seo/audits/682378120dd1f22ce38149a9\",\"status\":\"201\",\"responseTime\":\"38556.746\"}","timestamp":"2025-05-29T09:27:54.684Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-29T11:09:17.269Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-29T11:09:17.278Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/v1/api/seo/audits/682378120dd1f22ce38149a9\",\"status\":\"201\",\"responseTime\":\"41242.155\"}","timestamp":"2025-05-29T11:10:04.986Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-29T11:16:52.312Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-29T11:16:52.322Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-29T11:18:19.960Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-29T11:18:19.967Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Connected to MongoDB","timestamp":"2025-05-29T11:20:34.180Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"⚡ Server running on port 3101 ⚡","timestamp":"2025-05-29T11:20:34.193Z"}
