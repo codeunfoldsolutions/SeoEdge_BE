@@ -1,6 +1,7 @@
-import { launch } from 'chrome-launcher';
+import { launch, LaunchedChrome } from 'chrome-launcher';
 import { Response } from 'express';
 import lighthouse from 'lighthouse';
+import puppeteer, { Browser } from 'puppeteer-core';
 import mongoose, { Model, mongo, Types } from 'mongoose';
 import { ISeo, ISeoDocument, SeoModel } from '../../models/seo.model';
 import logger from '../../config/logger';
@@ -358,21 +359,56 @@ class SeoService {
   async lightHouseGenerateAudit(url: string) {
     const start = Date.now();
     try {
-      // 1) Launch headless Chrome
-      const chrome = await launch({
-        chromeFlags: ['--headless', '--no-sandbox', '--disable-gpu'],
-      });
-      const options = {
-        logLevel: 'verbose' as const,
-        port: chrome.port,
-        output: 'json' as const,
-      };
+      let options: any = {};
+      let chromeInstance: LaunchedChrome | null = null;
+      let puppeteerInstance: Browser | null = null;
+
+      if (process.env.NODE_ENV === 'development') {
+        chromeInstance = await launch({
+          chromeFlags: [
+            '--headless',
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--single-process',
+            '--no-zygote',
+          ],
+        });
+
+        options = {
+          logLevel: 'verbose' as const,
+          port: chromeInstance.port,
+          output: 'json' as const,
+        };
+      } else {
+        chromeInstance = await launch({
+          chromeFlags: [
+            '--headless',
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+          ],
+          // <-- tell chrome-launcher where to find chromium
+          chromePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium',
+        });
+
+        options = {
+          logLevel: 'verbose' as const,
+          port: chromeInstance.port,
+          output: 'json' as const,
+        };
+      }
 
       // 2) Run Lighthouse audit
       const runnerResult = await lighthouse(url, options);
 
       // 3) Kill Chrome
-      await chrome.kill();
+      // Clean up browser instances
+      if (chromeInstance) {
+        await chromeInstance.kill();
+      }
+      // await chrome.kill();
+      // await browser.close();
 
       // 4) Extract relevant categories
       if (!runnerResult || !runnerResult.lhr) {
@@ -476,7 +512,10 @@ class SeoService {
         durationMs,
       };
     } catch (error: any) {
-      logger.error(`Error generating Lighthouse report: ${error}`);
+      logger.error(
+        `Error generating Lighthouse report: ${error.message}`,
+        error.stack
+      );
       return { error: 'Failed to generate Lighthouse report' };
     }
   }
