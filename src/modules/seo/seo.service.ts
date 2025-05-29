@@ -361,7 +361,7 @@ class SeoService {
     try {
       let options: any = {};
       let chromeInstance: LaunchedChrome | null = null;
-      // let puppeteerInstance: Browser | null = null;
+      let puppeteerInstance: Browser | null = null;
 
       if (process.env.NODE_ENV === 'development') {
         chromeInstance = await launch({
