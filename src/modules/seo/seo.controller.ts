@@ -325,7 +325,7 @@ class SeoController {
     const id = req.params.projectId;
     try {
       //check if it is a valid mongoId
-      if (!this.seoService.isValidObjectId(id) === false) {
+      if ((await this.seoService.isValidObjectId(id)) === false) {
         return handleResponse(
           res,
           StatusCodes.BAD_REQUEST,
