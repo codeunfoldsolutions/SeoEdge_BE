@@ -121,11 +121,11 @@ class AuthService {
         return { error: 'Invalid credentials', status: 401 };
       }
 
-      // const isPasswordValid = await bcrypt.compare(password, user.password);
+      const isPasswordValid = await bcrypt.compare(password, user.password);
 
-      // if (!isPasswordValid) {
-      //   // return { error: 'Invalid credentials', status: 401 };
-      // }
+      if (!isPasswordValid) {
+        return { error: 'Invalid credentials', status: 401 };
+      }
 
       if (!user.isEmailVerified) {
         return { error: 'Please verify your email first', status: 403 };
