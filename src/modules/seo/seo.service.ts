@@ -1,7 +1,7 @@
 import { launch, LaunchedChrome } from 'chrome-launcher';
 import { Response } from 'express';
 import lighthouse from 'lighthouse';
-import puppeteer, { Browser } from 'puppeteer-core';
+import puppeteer, { Browser, PuppeteerNode } from 'puppeteer';
 import mongoose, { Model, mongo, Types } from 'mongoose';
 import { ISeo, ISeoDocument, SeoModel } from '../../models/seo.model';
 import logger from '../../config/logger';
@@ -14,6 +14,9 @@ import {
 } from '../../types/seo';
 import { Pagination } from '../../utils/pagination';
 import { AuditModel, IAudit, IAuditDocument } from '../../models/audit.model';
+
+const executablePath = puppeteer.executablePath();
+console.log('Chromium executable path:', executablePath);
 
 class SeoService {
   private static instance: SeoService;
@@ -358,10 +361,10 @@ class SeoService {
 
   async lightHouseGenerateAudit(url: string) {
     const start = Date.now();
+    let chromeInstance: LaunchedChrome | null = null;
+    let browser: Browser | null = null;
     try {
       let options: any = {};
-      let chromeInstance: LaunchedChrome | null = null;
-      let puppeteerInstance: Browser | null = null;
 
       if (process.env.NODE_ENV === 'development') {
         chromeInstance = await launch({
@@ -381,21 +384,49 @@ class SeoService {
           output: 'json' as const,
         };
       } else {
-        chromeInstance = await launch({
-          chromeFlags: [
-            '--headless',
+        // chromeInstance = await launch({
+        //   chromePath:
+        //     process.env.CHROME_PATH || '/opt/render/.cache/puppeteer/chrome',
+        //   chromeFlags: [
+        //     '--headless',
+        //     '--no-sandbox',
+        //     '--disable-setuid-sandbox',
+        //     '--disable-dev-shm-usage',
+        //     '--disable-extensions',
+        //     '--disable-gpu',
+        //     '--remote-debugging-port=9222',
+        //     '--disable-background-timer-throttling',
+        //     '--disable-renderer-backgrounding',
+        //     '--disable-backgrounding-occluded-windows',
+        //   ],
+        // });
+
+        // options = {
+        //   logLevel: 'verbose' as const,
+        //   port: chromeInstance.port,
+        //   output: 'json' as const,
+        // };
+        // Launch Puppeteer with specified executable path
+        browser = await puppeteer.launch({
+          // executablePath: puppeteer.executablePath(),
+          headless: true,
+          args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',
             '--disable-dev-shm-usage',
+            '--disable-extensions',
+            '--disable-gpu',
           ],
-          // <-- tell chrome-launcher where to find chromium
-          chromePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium',
         });
 
+        const wsEndpoint = browser.wsEndpoint();
+        const urlObj = new URL(wsEndpoint);
+        const port = parseInt(urlObj.port, 10);
+
         options = {
-          logLevel: 'verbose' as const,
-          port: chromeInstance.port,
-          output: 'json' as const,
+          logLevel: 'info',
+          output: 'json',
+          port,
         };
       }
 
@@ -407,8 +438,9 @@ class SeoService {
       if (chromeInstance) {
         await chromeInstance.kill();
       }
-      // await chrome.kill();
-      // await browser.close();
+      if (browser) {
+        await browser.close();
+      }
 
       // 4) Extract relevant categories
       if (!runnerResult || !runnerResult.lhr) {
@@ -517,6 +549,13 @@ class SeoService {
         error.stack
       );
       return { error: 'Failed to generate Lighthouse report' };
+    } finally {
+      if (chromeInstance) {
+        await chromeInstance.kill();
+      }
+      if (browser) {
+        await browser.close();
+      }
     }
   }
 
