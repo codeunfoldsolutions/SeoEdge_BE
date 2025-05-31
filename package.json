@@ -9,7 +9,7 @@
     "build": "tsc -p .",
     "postbuild": "tsc-esm-fix --ext .js",
     "local": "tsx watch src/index.ts",
-    "postinstall": "npx puppeteer browsers install chrome",
+    "postinstall": "node postinstall.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
