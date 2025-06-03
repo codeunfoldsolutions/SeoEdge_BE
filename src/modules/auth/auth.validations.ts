@@ -18,6 +18,10 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
+export const sessionRefreshSchema = z.object({
+  refreshToken: z.string(),
+});
+
 export const verifyEmailSchema = z.object({
   email: z.string().email("Invalid email address"),
   otp: z.string().length(6, "OTP must be 6 digits"),

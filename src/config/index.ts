@@ -1,6 +1,6 @@
-import dotenv from "dotenv";
 import { CorsOptions } from "cors";
 import connectDB from "./db";
+import env from "./env";
 
 // Base allowed origins
 const allowedOrigins = ["http://localhost:3000", "https://seoedge.netlify.app"];
@@ -10,8 +10,9 @@ class Config {
   CORS: CorsOptions;
 
   constructor() {
-    dotenv.config();
-    this.PORT = this.getPort();
+    const { PORT } = env;
+    this.PORT = PORT;
+
     this.CORS = {
       origin: (
         origin: string | undefined,
@@ -37,14 +38,8 @@ class Config {
   }
 
   async init() {
-    const db_url = process.env.MONGODB_URI as string;
-    await connectDB(db_url);
-  }
-
-  getPort(): number {
-    let port = parseInt(process.env.PORT as string);
-    if (isNaN(port)) port = 3500;
-    return port;
+    const { MONGODB_URI } = env;
+    await connectDB(MONGODB_URI);
   }
 }
 

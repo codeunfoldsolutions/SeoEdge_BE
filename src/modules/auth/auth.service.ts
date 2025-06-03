@@ -5,6 +5,7 @@ import { User } from '../../types/auth';
 import { IUserDocument, UserModel } from '../../models/user.model';
 import { generateOTP, sendEmail } from '../../utils/email';
 import logger from '../../config/logger';
+import env from '../../config/env';
 
 class AuthService {
   private static instance: AuthService;
@@ -188,11 +189,11 @@ class AuthService {
 
       const resetToken = jwt.sign(
         { userId: user._id },
-        process.env.JWT_SECRET!,
+        env.JWT_SECRET!,
         { expiresIn: '1h' }
       );
 
-      const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+      const resetUrl = `${env.FRONTEND_URL}/reset-password?token=${resetToken}`;
 
       await sendEmail({
         to: email,
@@ -213,7 +214,7 @@ class AuthService {
     refreshToken: string
   ) {
     try {
-      const decoded = jwt.verify(accessToken, process.env.JWT_SECRET!) as {
+      const decoded = jwt.verify(accessToken, env.JWT_SECRET!) as {
         userId: string;
       };
       const user = await this.userModel.findById(decoded.userId);
@@ -236,17 +237,28 @@ class AuthService {
   private generateTokens(user: IUserDocument) {
     const accessToken = jwt.sign(
       { userId: user._id },
-      process.env.JWT_SECRET!,
+      env.JWT_SECRET,
       { expiresIn: '1d' }
     );
 
     const refreshToken = jwt.sign(
       { userId: user._id },
-      process.env.JWT_REFRESH_SECRET!,
+      env.JWT_REFRESH_SECRET,
       { expiresIn: '7d' }
     );
 
     return { accessToken, refreshToken };
+  }
+
+  refreshToken(refreshToken: string) {
+    const data = jwt.verify(
+      refreshToken,
+      env.JWT_REFRESH_SECRET,
+    )
+
+    if (!data) return null;
+
+    return jwt.sign(data, env.JWT_SECRET);
   }
 }
 

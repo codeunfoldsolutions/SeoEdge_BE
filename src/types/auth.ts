@@ -28,6 +28,12 @@ export interface LoginRequest extends Request {
   };
 }
 
+export interface SessionRefreshRequest extends Request {
+  body: {
+    refreshToken: string;
+  };
+}
+
 export interface VerifyEmailAuthRequest extends Request {
   body: {
     email: string;

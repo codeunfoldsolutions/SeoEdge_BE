@@ -8,6 +8,7 @@ import type {
   ResendOtpRequest,
   SendPasswordResetEmailRequest,
   PasswordResetRequest,
+  SessionRefreshRequest,
 } from "../../types/auth";
 import AuthService from "./auth.service";
 import { handleResponse } from "../../utils";
@@ -87,6 +88,30 @@ class AuthController {
       logger.error(`Unexpected error: ${err}`);
       next(err);
     }
+  }
+
+  async handleSessionRefresh(req: SessionRefreshRequest, res: Response, next: NextFunction) {
+    try {
+      const { refreshToken } = req.body;
+
+      const token = this.authService.refreshToken(refreshToken);
+      if (!token) {
+        return handleResponse(
+          res,
+          StatusCodes.UNAUTHORIZED,
+          "Invalid refresh token"
+        );
+      }
+
+      return handleResponse(
+        res,
+        StatusCodes.OK,
+        "Session refreshed successfully",
+        {
+          session: { accessToken: token },
+        }
+      );
+    } catch (error) {}
   }
 
   async handleVerifyEmailAuth(

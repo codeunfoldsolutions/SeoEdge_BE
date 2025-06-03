@@ -1,8 +1,6 @@
 import nodemailer from "nodemailer";
 import logger from "../config/logger";
-import dotenv from "dotenv";
-
-dotenv.config();
+import env from "../config/env";
 
 interface EmailOptions {
   to: string;
@@ -13,16 +11,16 @@ interface EmailOptions {
 
 // Create a transporter using SMTP
 const transporter = nodemailer.createTransport({
-  host: process.env.MAIL_HOST,
+  host: env.MAIL_HOST,
   secure: false,
-  auth: { user: process.env.MAIL_USER, pass: process.env.MAIL_PASS },
+  auth: { user: env.MAIL_USER, pass: env.MAIL_PASS },
   port: 465,
 });
 
 export const sendEmail = async (options: EmailOptions): Promise<void> => {
   try {
     const mailOptions = {
-      from: process.env.DEFAULT_MAIL_FROM,
+      from: env.DEFAULT_MAIL_FROM,
       to: options.to,
       subject: options.subject,
       text: options.text,
