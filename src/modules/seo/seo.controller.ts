@@ -332,7 +332,7 @@ class SeoController {
           `Invalid project id`
         );
       }
-      // check if user the already has an entry in the system
+      // check if project exists
       const existingProject = await this.seoService.findProjectById(id);
 
       if (existingProject?.data?.length !== 1) {
@@ -340,6 +340,15 @@ class SeoController {
           res,
           StatusCodes.NOT_FOUND,
           `Project doesn't exist`
+        );
+      }
+
+      if (existingProject!.data[0].ownerId !== req.user) {
+        return handleResponse(
+          res,
+          StatusCodes.UNAUTHORIZED,
+          `LYou can't run this audit`,
+          { error: `Unauthorised user` }
         );
       }
 
@@ -358,6 +367,38 @@ class SeoController {
         );
       }
 
+      const pdfData = {
+        categories: lightResponse!.pdfData!.categories!,
+        audits: lightResponse!.pdfData!.audits!,
+        url: existingProject!.data[0].url,
+      };
+
+      //convert the response to pdf
+      const pdfResponse = await this.seoService.createPdfReport(pdfData!);
+      // Check if an error occurred during pdf creation
+      if ('error' in pdfResponse) {
+        return handleResponse(
+          res,
+          StatusCodes.BAD_REQUEST,
+          `Failed to create PDF`,
+          { error: pdfResponse.error }
+        );
+      }
+      // upload to Cloudinary
+      const pdfUrl: any = await this.seoService.uploadPdfToCloudinary(
+        pdfResponse!,
+        id
+      );
+      // Check if an error occurred during upload
+      if (pdfUrl?.error) {
+        return handleResponse(
+          res,
+          StatusCodes.BAD_REQUEST,
+          `Failed to upload PDF to Cloudinary`,
+          { error: pdfUrl.error }
+        );
+      }
+
       const auditData = {
         ownerId: req.user,
         projectId: existingProject.data[0].id,
@@ -367,6 +408,7 @@ class SeoController {
         categories: lightResponse!.categories!,
         audits: lightResponse!.audits!,
         criticalCount: lightResponse!.criticalCount!,
+        pdfUrl: pdfUrl,
       };
 
       //create new audit entry
@@ -406,7 +448,7 @@ class SeoController {
         res,
         StatusCodes.CREATED,
         'New Audit created successfully',
-        { data: newAudit.data, fake: updatedProject.data }
+        { data: newAudit.data }
       );
     } catch (err) {
       logger.error(`Something went wrong: ${err}`);
@@ -435,67 +477,80 @@ class SeoController {
     }
   }
 
-  async handleGeneratePdf(
-    req: pdfGenerationRequest,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
-    try {
-      const { id } = req.params;
+  // async handleGeneratePdf(
+  //   req: pdfGenerationRequest,
+  //   res: Response,
+  //   next: NextFunction
+  // ): Promise<void> {
+  //   try {
+  //     const { id } = req.params;
 
-      // check if user the already has an entry in the system
-      const existingSeo = await this.seoService.findProjectById(id);
+  //     // check if user the already has an entry in the system
+  //     const existingSeo = await this.seoService.findProjectById(id);
 
-      if (existingSeo?.data?.length !== 1) {
-        return handleResponse(
-          res,
-          StatusCodes.CONFLICT,
-          `This project doesn't exist`
-        );
-      }
-      // Generate Light House Seo
-      const lightResponse = await this.seoService.lightHouseGeneratePDFReport(
-        existingSeo!.data[0].url
-      );
+  //     if (existingSeo?.data?.length !== 1) {
+  //       return handleResponse(
+  //         res,
+  //         StatusCodes.CONFLICT,
+  //         `This project doesn't exist`
+  //       );
+  //     }
+  //     // Generate Light House Seo
+  //     const lightResponse = await this.seoService.lightHouseGeneratePDFReport(
+  //       existingSeo!.data[0].url
+  //     );
 
-      // Check if an error occurred during light house creation
-      if (lightResponse?.error) {
-        return handleResponse(
-          res,
-          StatusCodes.BAD_REQUEST,
-          `Lighthouse audit failed for ${
-            existingSeo!.data[0].title
-          } project failed `,
-          { error: lightResponse.error }
-        );
-      }
+  //     // Check if an error occurred during light house creation
+  //     if (lightResponse?.error) {
+  //       return handleResponse(
+  //         res,
+  //         StatusCodes.BAD_REQUEST,
+  //         `Lighthouse audit failed for ${
+  //           existingSeo!.data[0].title
+  //         } project failed `,
+  //         { error: lightResponse.error }
+  //       );
+  //     }
 
-      const lightHouseData = {
-        categories: lightResponse!.categories!,
-        audits: lightResponse!.audits!,
-        url: existingSeo!.data[0].url,
-      };
+  //     const lightHouseData = {
+  //       categories: lightResponse!.categories!,
+  //       audits: lightResponse!.audits!,
+  //       url: existingSeo!.data[0].url,
+  //     };
 
-      //convert the response to pdf
-      const pdfResponse = await this.seoService.createPdfReport(
-        lightHouseData!,
-        res as Response
-      );
+  //     //convert the response to pdf
+  //     const pdfResponse = await this.seoService.createPdfReport(
+  //       lightHouseData!
+  //     );
 
-      // Check if an error occurred during pdf creation
-      if (pdfResponse?.error) {
-        return handleResponse(
-          res,
-          StatusCodes.BAD_REQUEST,
-          `Failed to create PDF`,
-          { error: pdfResponse.error }
-        );
-      }
-    } catch (err) {
-      logger.error(`Something went wrong: ${err}`);
-      next(err);
-    }
-  }
+  //     // Check if an error occurred during pdf creation
+  //     if ('error' in pdfResponse) {
+  //       return handleResponse(
+  //         res,
+  //         StatusCodes.BAD_REQUEST,
+  //         `Failed to create PDF`,
+  //         { error: pdfResponse.error }
+  //       );
+  //     }
+  //     // upload to Cloudinary
+  //     const pdfUrl: any = await this.seoService.uploadPdfToCloudinary(
+  //       pdfResponse!,
+  //       id
+  //     );
+  //     // Check if an error occurred during upload
+  //     if (pdfUrl?.error) {
+  //       return handleResponse(
+  //         res,
+  //         StatusCodes.BAD_REQUEST,
+  //         `Failed to upload PDF to Cloudinary`,
+  //         { error: pdfUrl.error }
+  //       );
+  //     }
+  //   } catch (err) {
+  //     logger.error(`Something went wrong: ${err}`);
+  //     next(err);
+  //   }
+  // }
 }
 
 export default SeoController;

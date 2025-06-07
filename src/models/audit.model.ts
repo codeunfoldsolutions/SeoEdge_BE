@@ -59,6 +59,7 @@ export interface IAudit {
     };
   };
   score: number;
+  pdfUrl: string;
 }
 
 const AuditDetailSchema = new Schema(
@@ -113,6 +114,10 @@ const auditSchema = new Schema<IAuditDocument>(
       required: true,
     },
     duration: {
+      type: String,
+      // required: true
+    },
+    pdfUrl: {
       type: String,
       // required: true
     },

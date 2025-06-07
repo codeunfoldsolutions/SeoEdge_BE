@@ -68,11 +68,11 @@ SeoRouter.post(
 );
 
 //create pdf report
-SeoRouter.get(
-  '/pdf/:id',
-  verifyJWT,
-  // validateData(pdfGenerationRequest),
-  seoController.handleGeneratePdf.bind(seoController)
-);
+// SeoRouter.get(
+//   '/pdf/:id',
+//   verifyJWT,
+//   // validateData(pdfGenerationRequest),
+//   seoController.handleGeneratePdf.bind(seoController)
+// );
 
 export default SeoRouter;

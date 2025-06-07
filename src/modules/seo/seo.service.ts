@@ -14,9 +14,14 @@ import {
 } from '../../types/seo';
 import { Pagination } from '../../utils/pagination';
 import { AuditModel, IAudit, IAuditDocument } from '../../models/audit.model';
+import { v2 as cloudinary } from 'cloudinary';
+import { Readable } from 'stream';
 
-const executablePath = puppeteer.executablePath();
-console.log('Chromium executable path:', executablePath);
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 class SeoService {
   private static instance: SeoService;
@@ -221,6 +226,21 @@ class SeoService {
       return { error: 'Failed to create audit entry' };
     }
   }
+  async updateAudit(id: string, data: any) {
+    try {
+      const project = await this.auditModel.findByIdAndUpdate(
+        id,
+        {
+          $set: data,
+        },
+        { new: true } // Return the updated document
+      );
+      return { data: project ? [project] : [] };
+    } catch (error) {
+      logger.error(`Error checking project existence: ${error}`);
+      return { error: 'Failed to update Project entry' };
+    }
+  }
   async getAuditOverview(ownerId: string) {
     try {
       const id = new Types.ObjectId(ownerId);
@@ -384,28 +404,6 @@ class SeoService {
           output: 'json' as const,
         };
       } else {
-        // chromeInstance = await launch({
-        //   chromePath:
-        //     process.env.CHROME_PATH || '/opt/render/.cache/puppeteer/chrome',
-        //   chromeFlags: [
-        //     '--headless',
-        //     '--no-sandbox',
-        //     '--disable-setuid-sandbox',
-        //     '--disable-dev-shm-usage',
-        //     '--disable-extensions',
-        //     '--disable-gpu',
-        //     '--remote-debugging-port=9222',
-        //     '--disable-background-timer-throttling',
-        //     '--disable-renderer-backgrounding',
-        //     '--disable-backgrounding-occluded-windows',
-        //   ],
-        // });
-
-        // options = {
-        //   logLevel: 'verbose' as const,
-        //   port: chromeInstance.port,
-        //   output: 'json' as const,
-        // };
         // Launch Puppeteer with specified executable path
         browser = await puppeteer.launch({
           // executablePath: puppeteer.executablePath(),
@@ -433,8 +431,7 @@ class SeoService {
       // 2) Run Lighthouse audit
       const runnerResult = await lighthouse(url, options);
 
-      // 3) Kill Chrome
-      // Clean up browser instances
+      // 3) Kill Chrome or Clean up browser instances
       if (chromeInstance) {
         await chromeInstance.kill();
       }
@@ -446,7 +443,7 @@ class SeoService {
       if (!runnerResult || !runnerResult.lhr) {
         throw new Error('Lighthouse audit failed');
       }
-      const { categories, audits, fetchTime, requestedUrl } = runnerResult.lhr;
+      const { categories, audits } = runnerResult.lhr;
 
       const durationMs = Date.now() - start;
 
@@ -542,6 +539,10 @@ class SeoService {
         criticalCount,
         score,
         durationMs,
+        pdfData: {
+          categories: categories,
+          audits: audits,
+        },
       };
     } catch (error: any) {
       logger.error(
@@ -591,7 +592,7 @@ class SeoService {
     }
   }
 
-  async createPdfReport(report: lighthousePDFResponse, res: Response) {
+  async createPdfReport(report: lighthousePDFResponse) {
     const { audits, categories, url } = report;
 
     try {
@@ -606,11 +607,15 @@ class SeoService {
           good[id] = audit;
         }
       }
-      // Stream PDF response
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', 'inline; filename="report.pdf"');
+
       const doc = new PDFDocument({ margin: 40 });
-      doc.pipe(res);
+      // Collect PDF data into a buffer
+      const chunks: Buffer[] = [];
+      doc.on('data', (chunk) => chunks.push(chunk));
+      const endPromise = new Promise<Buffer>((resolve, reject) => {
+        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('error', reject);
+      });
 
       // Title page
       doc
@@ -618,7 +623,7 @@ class SeoService {
         .text('Lighthouse Report', { align: 'center' })
         .moveDown()
         .fontSize(12)
-        .text(`URL: ${report.fetchedUrl ?? report.url ?? 'N/A'}`, {
+        .text(`URL: ${report.fetchedUrl ?? url ?? 'N/A'}`, {
           align: 'center',
         })
         .text(`Date: ${new Date().toLocaleString()}`, { align: 'center' });
@@ -629,10 +634,40 @@ class SeoService {
       this.writeAuditSection(doc, good, 'No Issues');
 
       doc.end();
+      return endPromise;
     } catch (error: any) {
       logger.error(`Error generating Lighthouse PDF report: ${error}`);
       return { error: 'Failed to generate Lighthouse PDF report' };
     }
+  }
+
+  async uploadPdfToCloudinary(pdfBuffer: Buffer, ownerId: string) {
+    return new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          resource_type: 'raw', // Treat PDF as a raw file
+          access_mode: 'public', // Make the file publicly accessible
+          folder: `lightHouseAudit/${ownerId}`,
+          use_filename: true,
+          unique_filename: false,
+        },
+        (error, result) => {
+          if (error) console.log(error);
+          if (error) return reject(error);
+          if (result && result.secure_url) {
+            resolve(result.secure_url);
+          } else {
+            console.log(error);
+            reject(new Error('Upload failed'));
+          }
+        }
+      );
+
+      const readable = new Readable();
+      readable.push(pdfBuffer);
+      readable.push(null);
+      readable.pipe(uploadStream);
+    });
   }
 
   async isValidObjectId(id: string): Promise<boolean> {
