@@ -333,22 +333,16 @@ class SeoController {
         );
       }
       // check if project exists
-      const existingProject = await this.seoService.findProjectById(id);
+      const existingProject = await this.seoService.findProjectByIdAndOwner(
+        id,
+        req.user
+      );
 
       if (existingProject?.data?.length !== 1) {
         return handleResponse(
           res,
           StatusCodes.NOT_FOUND,
-          `Project doesn't exist`
-        );
-      }
-
-      if (existingProject!.data[0].ownerId !== req.user) {
-        return handleResponse(
-          res,
-          StatusCodes.UNAUTHORIZED,
-          `LYou can't run this audit`,
-          { error: `Unauthorised user` }
+          `Project doesn't exist in your catalogue`
         );
       }
 
@@ -367,6 +361,8 @@ class SeoController {
         );
       }
 
+      console.log('done with light response');
+
       const pdfData = {
         categories: lightResponse!.pdfData!.categories!,
         audits: lightResponse!.pdfData!.audits!,
@@ -384,6 +380,9 @@ class SeoController {
           { error: pdfResponse.error }
         );
       }
+
+      console.log('done with pdf response');
+
       // upload to Cloudinary
       const pdfUrl: any = await this.seoService.uploadPdfToCloudinary(
         pdfResponse!,
@@ -398,6 +397,8 @@ class SeoController {
           { error: pdfUrl.error }
         );
       }
+
+      console.log('done with pdf upload');
 
       const auditData = {
         ownerId: req.user,

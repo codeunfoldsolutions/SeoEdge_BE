@@ -1,4 +1,4 @@
-import { launch, LaunchedChrome } from 'chrome-launcher';
+import { launch, LaunchedChrome, killAll } from 'chrome-launcher';
 import { Response } from 'express';
 import lighthouse from 'lighthouse';
 import puppeteer, { Browser, PuppeteerNode } from 'puppeteer';
@@ -16,11 +16,12 @@ import { Pagination } from '../../utils/pagination';
 import { AuditModel, IAudit, IAuditDocument } from '../../models/audit.model';
 import { v2 as cloudinary } from 'cloudinary';
 import { Readable } from 'stream';
+import env from '../../config/env';
 
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: env.CLOUDINARY_CLOUD_NAME,
+  api_key: env.CLOUDINARY_API_KEY,
+  api_secret: env.CLOUDINARY_API_SECRET,
 });
 
 class SeoService {
@@ -287,6 +288,19 @@ class SeoService {
       throw new Error('Failed to get audit overview');
     }
   }
+  async findProjectByIdAndOwner(id: string, ownerId: string) {
+    try {
+      const project = await this.seoModel.find({
+        _id: id,
+        ownerId: ownerId,
+      });
+
+      return { data: project ? project : [] };
+    } catch (error) {
+      logger.error(`Error checking project existence: ${error}`);
+      throw new Error('Failed to check project existence');
+    }
+  }
   async findProjectById(id: string) {
     try {
       const project = await this.seoModel.findById(id);
@@ -386,7 +400,7 @@ class SeoService {
     try {
       let options: any = {};
 
-      if (process.env.NODE_ENV === 'development') {
+      if (env.NODE_ENV === 'development') {
         chromeInstance = await launch({
           chromeFlags: [
             '--headless',
@@ -399,7 +413,7 @@ class SeoService {
         });
 
         options = {
-          logLevel: 'verbose' as const,
+          logLevel: 'error' as const,
           port: chromeInstance.port,
           output: 'json' as const,
         };
@@ -422,7 +436,7 @@ class SeoService {
         const port = parseInt(urlObj.port, 10);
 
         options = {
-          logLevel: 'info',
+          logLevel: 'error',
           output: 'json',
           port,
         };
@@ -434,6 +448,8 @@ class SeoService {
       // 3) Kill Chrome or Clean up browser instances
       if (chromeInstance) {
         await chromeInstance.kill();
+        await killAll();
+        console.log('killed');
       }
       if (browser) {
         await browser.close();
@@ -553,6 +569,7 @@ class SeoService {
     } finally {
       if (chromeInstance) {
         await chromeInstance.kill();
+        await killAll();
       }
       if (browser) {
         await browser.close();
@@ -642,14 +659,16 @@ class SeoService {
   }
 
   async uploadPdfToCloudinary(pdfBuffer: Buffer, ownerId: string) {
+    const publicId = `${ownerId}/audit.pdf`;
     return new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
-          resource_type: 'raw', // Treat PDF as a raw file
-          access_mode: 'public', // Make the file publicly accessible
+          resource_type: 'raw',
           folder: `lightHouseAudit/${ownerId}`,
-          use_filename: true,
+          public_id: publicId,
+          use_filename: false,
           unique_filename: false,
+          access_mode: 'public',
         },
         (error, result) => {
           if (error) console.log(error);
