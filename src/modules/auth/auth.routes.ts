@@ -6,6 +6,7 @@ import {
   verifyEmailSchema,
   resendOtpSchema,
   sendPasswordResetEmailSchema,
+  sessionRefreshSchema,
   passwordResetSchema,
 } from "./auth.validations";
 import AuthController from "./auth.controller";
@@ -26,6 +27,13 @@ AuthRouter.post(
   "/login",
   validateData(loginSchema),
   authController.handleLogin.bind(authController)
+);
+
+// Refresh acess token
+AuthRouter.post(
+  "/login/refresh",
+  validateData(sessionRefreshSchema),
+  authController.handleSessionRefresh.bind(authController)
 );
 
 // Verify email with OTP
