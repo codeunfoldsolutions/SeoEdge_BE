@@ -33,6 +33,12 @@ SeoRouter.post(
   validateData(seoCreationRequest),
   seoController.handleNewProject.bind(seoController)
 );
+// Get a project
+SeoRouter.get(
+  '/project/:projectId',
+  verifyJWT,
+  seoController.handleGetAProject.bind(seoController)
+);
 
 // Gets audits comparisons
 SeoRouter.get(

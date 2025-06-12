@@ -543,6 +543,10 @@ class SeoService {
       const criticalCount = Object.values(audits).reduce((count, a) => {
         return count + (a.score === null || a.score < 0.5 ? 1 : 0);
       }, 0);
+      const minorCount = Object.values(audits).reduce((count, a) => {
+        const s = Number(a.score) || 0; // Convert to number, default to 0 if null
+        return count + (typeof s === 'number' && s > 0.5 && s <= 0.899 ? 1 : 0);
+      }, 0);
 
       return {
         categories: {
@@ -553,6 +557,7 @@ class SeoService {
         },
         audits: processedAudits,
         criticalCount,
+        minorCount,
         score,
         durationMs,
         pdfData: {

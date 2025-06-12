@@ -9,8 +9,10 @@ export interface ISeo {
   description: string;
   keywords: string[];
   criticalCount?: number;
+  minorCount?: number;
   active?: boolean;
   score?: number;
+  auditsCount?: number;
   // categories: {
   //   performance: number;
   //   accessibility: number;
@@ -127,11 +129,21 @@ const seoSchema = new Schema<ISeoDocument>(
       default: 0,
       required: true,
     },
+    auditsCount: {
+      type: Number,
+      default: 0,
+      required: true,
+    },
     description: {
       type: String,
       // required: true
     },
     criticalCount: {
+      type: Number,
+      default: 0,
+      // required: true
+    },
+    minorCount: {
       type: Number,
       default: 0,
       // required: true

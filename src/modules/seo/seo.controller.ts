@@ -77,6 +77,51 @@ class SeoController {
       next(err);
     }
   }
+  async handleGetAProject(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const { projectId } = req.params;
+    try {
+      //check if it is a valid mongoId
+      if (!mongoose.Types.ObjectId.isValid(projectId)) {
+        return handleResponse(
+          res,
+          StatusCodes.BAD_REQUEST,
+          `Invalid project id`
+        );
+      }
+      // Now pageNum is a valid number
+      const existingSeo = await this.seoService.findProjectById(projectId);
+
+      if (existingSeo?.data?.length !== 1) {
+        return handleResponse(
+          res,
+          StatusCodes.NOT_FOUND,
+          `Project doesn't exist`
+        );
+      }
+
+      if (existingSeo?.data[0].ownerId.toString() !== req.user.toString()) {
+        return handleResponse(
+          res,
+          StatusCodes.UNAUTHORIZED,
+          `You don't have access to this project`
+        );
+      }
+
+      return handleResponse(
+        res,
+        StatusCodes.OK,
+        'SEO project fetched successfully',
+        { data: existingSeo.data }
+      );
+    } catch (err) {
+      logger.error(`Something went wrong: ${err}`);
+      next(err);
+    }
+  }
   async handleCompareRecentAudits(
     req: Request,
     res: Response,
@@ -429,6 +474,10 @@ class SeoController {
       const data = {
         score: lightResponse!.score,
         criticalCount: lightResponse!.criticalCount,
+        minorCount: lightResponse!.minorCount,
+        auditsCount: existingProject.data[0].auditsCount
+          ? existingProject.data[0].auditsCount + 1
+          : 1,
       };
 
       const updatedProject = await this.seoService.updateSeoEntry(
